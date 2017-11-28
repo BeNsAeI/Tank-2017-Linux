@@ -499,7 +499,7 @@ int main( int argc, char *argv[ ] )
 
 
 	// this is here to make the compiler happy:
-
+	glDeleteBuffers(1, &VertexVBOID);
 	return 0;
 }
 void Animate()
@@ -511,7 +511,6 @@ void Animate()
 	Time = (float)ms / 180000;
 	// animate with time here:
 	// force a call to Display( ) next time it is convenient:
-
 	glutSetWindow(MainWindow);
 	glutPostRedisplay();
 }

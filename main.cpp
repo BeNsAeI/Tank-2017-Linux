@@ -385,7 +385,7 @@ int main(int argc, char *argv[])
 	// this is here to make the compiler happy:
 	for(int i = 0; i < NUMMODEL; i++)
 		glDeleteBuffers(1, &ModelIDList[i]);
-	//glDeleteBuffers(1, &VertexVBOID);
+	glDeleteBuffers(1, &VertexVBOID);
 	alDeleteSources(1, &mainMusic);
 	alDeleteSources(1, &tankShellFire);
 	alDeleteSources(1, &tankShellBounce);
