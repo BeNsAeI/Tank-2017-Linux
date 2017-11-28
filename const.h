@@ -10,7 +10,7 @@ const int GLUIFALSE = { false };
 #define CAMY 80;
 #define START 0
 #define END 1
-#define TANKSCALE 0.175
+#define TANKSCALE 0.2
 #define MAPEDGEX 40
 #define MAPEDGEY 70
 #define BODY 4.5

@@ -888,7 +888,7 @@ void drawIS3(float X, float Y, float Z , float hullAngle ,float turretAngle)
 	glTranslatef(0, 3, 0);
 	glRotatef(turretAngle, 0, 0, 1);
 	glTranslatef(0, -3, 0);
-	glColor3f(0, 0.75,0);
+	glColor3f(0,0,0.5);
 	SetMaterial(0, 0, 0.5, 1.0);
 	glDrawArrays(GL_TRIANGLES, beginPoint, endPoint);
 	//glColor3f(1, 1, 1);
@@ -901,7 +901,7 @@ void drawIS3(float X, float Y, float Z , float hullAngle ,float turretAngle)
 	endPoint = IS3[1][END] - IS3[1][START];
 	glPushMatrix();
 	glTranslatef(0.75, 0, 0);
-	glColor3f(0, 0.75,0);
+	glColor3f(0, 0,0.5);
 	SetMaterial(0, 0, 0.5, 1.0);
 	glDrawArrays(GL_TRIANGLES, beginPoint, endPoint);
 	//glColor3f(1, 1, 1);
@@ -2085,7 +2085,7 @@ void Display()
 					glPolygonOffset(-2.5, -2.5);
 					// Set the render mode to be line rendering with a thick line width
 					glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-					glLineWidth(2.0);
+					glLineWidth(4.0);
 					// Set the colour to be white
 					glColor3f(1, 1, 1);
 					// Render the object
@@ -2123,7 +2123,7 @@ void Display()
 					glPolygonOffset(-2.5, -2.5);
 					// Set the render mode to be line rendering with a thick line width
 					glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-					glLineWidth(2.0);
+					glLineWidth(4.0);
 					// Set the colour to be white
 					glColor3f(1, 1, 1);
 					// Render the object
@@ -2168,7 +2168,7 @@ void Display()
 		glPolygonOffset(-2.5, -2.5);
 		// Set the render mode to be line rendering with a thick line width
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		glLineWidth(2.0);
+		glLineWidth(4.0);
 		// Set the colour to be white
 		glColor3f(1, 1, 1);
 		// Render the object
@@ -2182,7 +2182,7 @@ void Display()
 		glVertex3f(MAPEDGEX + 20, 3, MAPEDGEY);
 		glVertex3f(MAPEDGEX + 20, 3, MAPEDGEY - IS3Smoke * 7 );
 		glEnd();
-		glLineWidth(2.0);
+		glLineWidth(4.0);
 		if (AbramSmoke > 0)
 			drawSmokeCrate(MAPEDGEX + 22, -MAPEDGEY + AbramSmoke * 7 + 1,90);
 		if (IS3Smoke > 0)
@@ -2208,7 +2208,7 @@ void Display()
 		glPolygonOffset(-2.5, -2.5);
 		// Set the render mode to be line rendering with a thick line width
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		glLineWidth(2.0);
+		glLineWidth(4.0);
 		// Set the colour to be white
 		glColor3f(1, 1, 1);
 		// Render the object
@@ -2222,7 +2222,7 @@ void Display()
 		glVertex3f(MAPEDGEX + 15,3, MAPEDGEY);
 		glVertex3f(MAPEDGEX + 15,3, MAPEDGEY - IS3Shells * 2);
 		glEnd();
-		glLineWidth(2.0);
+		glLineWidth(4.0);
 		if(AbramShells > 0)
 			drawShell(MAPEDGEX + 15, -MAPEDGEY + AbramShells * 2, 180,4);
 		if (IS3Shells > 0)
@@ -2250,7 +2250,7 @@ void Display()
 		glPolygonOffset(-2.5, -2.5);
 		// Set the render mode to be line rendering with a thick line width
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		glLineWidth(2.0);
+		glLineWidth(4.0);
 		// Set the colour to be white
 		glColor3f(1, 1, 1);
 		// Render the object
@@ -2345,7 +2345,7 @@ void Display()
 					glPolygonOffset(-2.5, -2.5);
 					// Set the render mode to be line rendering with a thick line width
 					glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-					glLineWidth(2.0);
+					glLineWidth(4.0);
 					// Set the colour to be white
 					glColor3f(1, 1, 1);
 					// Render the object
@@ -2378,7 +2378,7 @@ void Display()
 				glPolygonOffset(-2.5, -2.5);
 				// Set the render mode to be line rendering with a thick line width
 				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-				glLineWidth(2.0);
+				glLineWidth(4.0);
 				// Set the colour to be white
 				glColor3f(1, 1, 1);
 				// Render the object
@@ -2407,7 +2407,7 @@ void Display()
 		glPolygonOffset(-2.5, -2.5);
 		// Set the render mode to be line rendering with a thick line width
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		glLineWidth(2.0);
+		glLineWidth(4.0);
 		// Set the colour to be white
 		glColor3f(1, 1, 1);
 		// Render the object
@@ -2467,7 +2467,7 @@ void Display()
 				glPolygonOffset(-2.5, -2.5);
 				// Set the render mode to be line rendering with a thick line width
 				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-				glLineWidth(2.0);
+				glLineWidth(4.0);
 				// Set the colour to be white
 				glColor3f(1, 1, 1);
 				// Render the object
