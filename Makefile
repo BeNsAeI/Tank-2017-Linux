@@ -3,7 +3,7 @@ main:		main.cpp
 #		./out
 		make GUI
 		make glew
-		./gui
+		./Tank\ 2017
 install:
 		sudo apt-get install build-essential libgl1-mesa-dev
 		sudo apt-get install libglew-dev libsdl2-dev libsdl2-image-dev libglm-dev libfreetype6-dev
@@ -14,7 +14,7 @@ glew:
 		g++ -o out  main.cpp glslprogram.cpp loader.cpp SimpleAI.cpp -DGLEW_STATIC -lGL  -lGLU /usr/lib/libglut.so  -lm -lGLEW -lGLU -lm -lGL -lm -lpthread -ldl -ldrm -lXdamage -lXfixes -lX11-xcb -lxcb-glx -lxcb-dri2 -lXxf86vm -lXext -lX11 -lpthread -lxcb -lXau -lXdmcp -fpermissive -lalut -lopenal
 #		./out 1
 GUI:
-		g++ -o gui  GUI.cpp glslprogram.cpp loader.cpp SimpleAI.cpp -DGLEW_STATIC -lGL  -lGLU /usr/lib/libglut.so  -lm -lGLEW -lGLU -lm -lGL -lm -lpthread -ldl -ldrm -lXdamage -lXfixes -lX11-xcb -lxcb-glx -lxcb-dri2 -lXxf86vm -lXext -lX11 -lpthread -lxcb -lXau -lXdmcp -fpermissive -lalut -lopenal
+		g++ -o Tank\ 2017  GUI.cpp glslprogram.cpp loader.cpp SimpleAI.cpp -DGLEW_STATIC -lGL  -lGLU /usr/lib/libglut.so  -lm -lGLEW -lGLU -lm -lGL -lm -lpthread -ldl -ldrm -lXdamage -lXfixes -lX11-xcb -lxcb-glx -lxcb-dri2 -lXxf86vm -lXext -lX11 -lpthread -lxcb -lXau -lXdmcp -fpermissive -lalut -lopenal
 		
 main2:		main-myOwn-View-Point.cpp
 		g++ -o out  main-myOwn-View-Point.cpp  -lGL  -lGLU  /usr/lib/libglut.so  -lm
