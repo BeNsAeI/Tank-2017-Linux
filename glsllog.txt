@@ -1,0 +1,7 @@
+
+0(42) : warning C7533: global variable gl_FragColor is deprecated after version 120
+0(27) : error C1008: undefined variable "sampleNrm"
+0(44) : error C1008: undefined variable "sampleNrm"
+0(45) : error C1008: undefined variable "sampleNrm"
+0(46) : error C1008: undefined variable "sampleNrm"
+
