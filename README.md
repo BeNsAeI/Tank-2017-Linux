@@ -3,7 +3,8 @@ Tank2017: I don't claim Tank2017 is good for anything - if you think it is, grea
 
 Please feel free to contact me with regards to this project:
 
-Saeedib@oregonstate.edu
-http://people.oregonstate.edu/~Saeedib/
+Email: Saeedib@oregonstate.edu
+
+Website: http://people.oregonstate.edu/~Saeedib/
 
 Thank you!
