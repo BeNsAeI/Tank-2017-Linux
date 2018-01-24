@@ -1,7 +1,113 @@
 
-0(42) : warning C7533: global variable gl_FragColor is deprecated after version 120
-0(27) : error C1008: undefined variable "sampleNrm"
-0(44) : error C1008: undefined variable "sampleNrm"
-0(45) : error C1008: undefined variable "sampleNrm"
-0(46) : error C1008: undefined variable "sampleNrm"
+0:16(38): error: `uTime' undeclared
+0:16(33): error: operands to arithmetic operators must be numeric
+0:16(33): error: operands to arithmetic operators must be numeric
+0:16(29): error: no matching function for call to `sin(error)'; candidates are:
+0:16(29): error:    float sin(float)
+0:16(29): error:    vec2 sin(vec2)
+0:16(29): error:    vec3 sin(vec3)
+0:16(29): error:    vec4 sin(vec4)
+0:16(25): error: no matching function for call to `abs(error)'; candidates are:
+0:16(25): error:    float abs(float)
+0:16(25): error:    vec2 abs(vec2)
+0:16(25): error:    vec3 abs(vec3)
+0:16(25): error:    vec4 abs(vec4)
+0:16(25): error:    int abs(int)
+0:16(25): error:    ivec2 abs(ivec2)
+0:16(25): error:    ivec3 abs(ivec3)
+0:16(25): error:    ivec4 abs(ivec4)
+0:16(23): error: operands to arithmetic operators must be numeric
+0:16(92): error: `uTime' undeclared
+0:16(87): error: operands to arithmetic operators must be numeric
+0:16(87): error: operands to arithmetic operators must be numeric
+0:16(83): error: no matching function for call to `sin(error)'; candidates are:
+0:16(83): error:    float sin(float)
+0:16(83): error:    vec2 sin(vec2)
+0:16(83): error:    vec3 sin(vec3)
+0:16(83): error:    vec4 sin(vec4)
+0:16(79): error: no matching function for call to `abs(error)'; candidates are:
+0:16(79): error:    float abs(float)
+0:16(79): error:    vec2 abs(vec2)
+0:16(79): error:    vec3 abs(vec3)
+0:16(79): error:    vec4 abs(vec4)
+0:16(79): error:    int abs(int)
+0:16(79): error:    ivec2 abs(ivec2)
+0:16(79): error:    ivec3 abs(ivec3)
+0:16(79): error:    ivec4 abs(ivec4)
+0:16(71): error: operands to arithmetic operators must be numeric
+0:16(66): error: cannot construct `vec2' from a non-numeric data type
+0:16(62): error: no matching function for call to `dot(error, vec2)'; candidates are:
+0:16(62): error:    float dot(float, float)
+0:16(62): error:    float dot(vec2, vec2)
+0:16(62): error:    float dot(vec3, vec3)
+0:16(62): error:    float dot(vec4, vec4)
+0:16(58): error: no matching function for call to `sin(error)'; candidates are:
+0:16(58): error:    float sin(float)
+0:16(58): error:    vec2 sin(vec2)
+0:16(58): error:    vec3 sin(vec3)
+0:16(58): error:    vec4 sin(vec4)
+0:16(58): error: operands to arithmetic operators must be numeric
+0:16(52): error: no matching function for call to `fract(error)'; candidates are:
+0:16(52): error:    float fract(float)
+0:16(52): error:    vec2 fract(vec2)
+0:16(52): error:    vec3 fract(vec3)
+0:16(52): error:    vec4 fract(vec4)
+0:16(23): error: operands to arithmetic operators must be numeric
+0:16(15): error: operands to arithmetic operators must be numeric
+0:16(14): error: operands to arithmetic operators must be numeric
+0:17(37): error: `uTime' undeclared
+0:17(32): error: operands to arithmetic operators must be numeric
+0:17(32): error: operands to arithmetic operators must be numeric
+0:17(28): error: no matching function for call to `sin(error)'; candidates are:
+0:17(28): error:    float sin(float)
+0:17(28): error:    vec2 sin(vec2)
+0:17(28): error:    vec3 sin(vec3)
+0:17(28): error:    vec4 sin(vec4)
+0:17(24): error: no matching function for call to `abs(error)'; candidates are:
+0:17(24): error:    float abs(float)
+0:17(24): error:    vec2 abs(vec2)
+0:17(24): error:    vec3 abs(vec3)
+0:17(24): error:    vec4 abs(vec4)
+0:17(24): error:    int abs(int)
+0:17(24): error:    ivec2 abs(ivec2)
+0:17(24): error:    ivec3 abs(ivec3)
+0:17(24): error:    ivec4 abs(ivec4)
+0:17(22): error: operands to arithmetic operators must be numeric
+0:17(91): error: `uTime' undeclared
+0:17(86): error: operands to arithmetic operators must be numeric
+0:17(86): error: operands to arithmetic operators must be numeric
+0:17(82): error: no matching function for call to `sin(error)'; candidates are:
+0:17(82): error:    float sin(float)
+0:17(82): error:    vec2 sin(vec2)
+0:17(82): error:    vec3 sin(vec3)
+0:17(82): error:    vec4 sin(vec4)
+0:17(78): error: no matching function for call to `abs(error)'; candidates are:
+0:17(78): error:    float abs(float)
+0:17(78): error:    vec2 abs(vec2)
+0:17(78): error:    vec3 abs(vec3)
+0:17(78): error:    vec4 abs(vec4)
+0:17(78): error:    int abs(int)
+0:17(78): error:    ivec2 abs(ivec2)
+0:17(78): error:    ivec3 abs(ivec3)
+0:17(78): error:    ivec4 abs(ivec4)
+0:17(70): error: operands to arithmetic operators must be numeric
+0:17(65): error: cannot construct `vec2' from a non-numeric data type
+0:17(61): error: no matching function for call to `dot(error, vec2)'; candidates are:
+0:17(61): error:    float dot(float, float)
+0:17(61): error:    float dot(vec2, vec2)
+0:17(61): error:    float dot(vec3, vec3)
+0:17(61): error:    float dot(vec4, vec4)
+0:17(57): error: no matching function for call to `sin(error)'; candidates are:
+0:17(57): error:    float sin(float)
+0:17(57): error:    vec2 sin(vec2)
+0:17(57): error:    vec3 sin(vec3)
+0:17(57): error:    vec4 sin(vec4)
+0:17(57): error: operands to arithmetic operators must be numeric
+0:17(51): error: no matching function for call to `fract(error)'; candidates are:
+0:17(51): error:    float fract(float)
+0:17(51): error:    vec2 fract(vec2)
+0:17(51): error:    vec3 fract(vec3)
+0:17(51): error:    vec4 fract(vec4)
+0:17(22): error: operands to arithmetic operators must be numeric
+0:17(14): error: operands to arithmetic operators must be numeric
 
