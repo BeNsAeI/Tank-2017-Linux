@@ -1,0 +1,23 @@
+##OpenGL GLIB
+
+Perspective 90
+LookAt 0 0 10  0 0 0  0 1 0
+
+Vertex   camo.vert
+Fragment camo.frag
+Program camo   					\
+		uKa <0. .5 1.>			\
+		uKd <0. .5 1.>			\
+		uAd <0. .25 1.>			\
+		uBd <0. .25 1.>			\
+		uTol <0. 0 5>			\
+		uNoiseAmp <0. 0.75 1.>	\
+		uNoiseFreq <0 0.15 10>	\
+		uAlpha <0. 0 1.>		\
+		uTime <0. 1. 10.>
+rotate 35 1 0 0
+rotate 135 0 1 0
+rotate -90 1 0 0
+scale 0.25 0.25 0.25
+obj Tank.obj
+#Torus 1.0 0.5 60 60
