@@ -7,6 +7,7 @@ in vec3 gN; // normal vector
 in vec3 gL; // vector from point to light
 in vec4 gColor;
 
+
 void
 main( )
 {

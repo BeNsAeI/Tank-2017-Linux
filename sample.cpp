@@ -2506,7 +2506,9 @@ void Display()
 					// Render the object
 					// draw map border/**/
 					//DO TOON SHADING
+					PatternSilh->Use();
 					drawCube(myMap.coord[i][j][0], myMap.coord[i][j][1], myMap.coord[i][j][2], myMap.color[i][j][0], myMap.color[i][j][1], myMap.color[i][j][2]);
+					PatternSilh->Use(0);
 					/**/glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 					//glShadeModel(GL_FLAT);
 					//glEnable(GL_LIGHTING);
@@ -2538,9 +2540,9 @@ void Display()
 					// Set the colour to be white
 					glColor3f(.5, .5, .5);
 					// Render the object
-
+					PatternSilh->Use();
 					drawTreeCube(myMap.coord[i][j][0], myMap.coord[i][j][1], myMap.angle[i][j], myMap.color[i][j][0]);
-
+					PatternSilh->Use(0);
 					// Set the polygon mode to be filled triangles
 					glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 					glShadeModel(GL_FLAT);
@@ -2562,19 +2564,19 @@ void Display()
 		//end of drawing map
 
 		// Push the GL attribute bits so that we don't wreck any settings
-		Pattern->Use();
 		glPushAttrib(GL_ALL_ATTRIB_BITS);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		// Enable polygon offsets, and offset filled polygons forward by 2.5
 		glEnable(GL_POLYGON_OFFSET_FILL);
-		glPolygonOffset(-2.5, -2.5);
+		glPolygonOffset(-2.5f, -2.5f);
 		// Set the render mode to be line rendering with a thick line width
 		glLineWidth(OUTLINE);
 		// Set the colour to be white
-		glColor3f(0.75, 0.75, 0.75);
+		glColor3f(.75, .75, .75);
 		// Render the object
+		PatternSilh->Use();
 		switch (backgroundRand)
-		{	// BEHNAMSAEEDI
+		{
 		case 0:
 			drawHPCrate(0, 0);
 			break;
@@ -2594,9 +2596,9 @@ void Display()
 			drawMine(0, 0);
 			break;
 		}
+		PatternSilh->Use(0);
 		// Set the polygon mode to be filled triangles 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		Pattern->Use(0);
 		//glShadeModel(GL_FLAT);
 		//glEnable(GL_LIGHTING);
 		////SetPointLight(GL_LIGHT2, 0, 15, 0, 0.75, 0.75, 0.75);
@@ -2712,12 +2714,14 @@ void Display()
 					// Set the colour to be white
 					glColor3f(.5, .5, .5);
 					// Render the object
+					PatternSilh->Use();
 					drawExplosion(AbramXY[0], AbramXY[1], 0, 0, 0.5, 1 - abs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * abs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
 					drawExplosion(AbramXY[0], AbramXY[1], 0, 60, 0.5, 1 - abs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * abs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
 					drawExplosion(AbramXY[0], AbramXY[1], 0, 120, 0.5, 1 - abs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * abs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
 					drawExplosion(AbramXY[0], AbramXY[1], 0, 180, 0.5, 1 - abs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * abs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
 					drawExplosion(AbramXY[0], AbramXY[1], 0, 240, 0.5, 1 - abs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * abs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
 					drawExplosion(AbramXY[0], AbramXY[1], 0, 300, 0.5, 1 - abs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * abs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
+					PatternSilh->Use(0);
 					// Set the polygon mode to be filled triangles 
 					glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 					glShadeModel(GL_FLAT);
@@ -2755,12 +2759,14 @@ void Display()
 					// Set the colour to be white
 					glColor3f(.5, .5, .5);
 					// Render the object
+					PatternSilh->Use();
 					drawExplosion(IS3XY[0], IS3XY[1], 0, 0, 0.5, 1 - abs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * abs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
 					drawExplosion(IS3XY[0], IS3XY[1], 0, 60, 0.5, 1 - abs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * abs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
 					drawExplosion(IS3XY[0], IS3XY[1], 0, 120, 0.5, 1 - abs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * abs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
 					drawExplosion(IS3XY[0], IS3XY[1], 0, 180, 0.5, 1 - abs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * abs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
 					drawExplosion(IS3XY[0], IS3XY[1], 0, 240, 0.5, 1 - abs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * abs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
 					drawExplosion(IS3XY[0], IS3XY[1], 0, 300, 0.5, 1 - abs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * abs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
+					PatternSilh->Use(0);
 					// Set the polygon mode to be filled triangles 
 					glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 					glShadeModel(GL_FLAT);
@@ -2805,6 +2811,7 @@ void Display()
 		// Set the colour to be white
 		glColor3f(.5, .5, .5);
 		// Render the object
+		PatternSilh->Use();
 		glBegin(GL_LINE_STRIP);
 		glColor3f(1, 1, 0);
 		glVertex3f(MAPEDGEX + 20, 3, -MAPEDGEY);
@@ -2815,6 +2822,7 @@ void Display()
 		glVertex3f(MAPEDGEX + 20, 3, MAPEDGEY);
 		glVertex3f(MAPEDGEX + 20, 3, MAPEDGEY - IS3Smoke * 7);
 		glEnd();
+		PatternSilh->Use(0);
 		glLineWidth(OUTLINE);
 		if (AbramSmoke > 0)
 			drawSmokeCrate(MAPEDGEX + 22, -MAPEDGEY + AbramSmoke * 7 + 1, 90);
@@ -2850,6 +2858,7 @@ void Display()
 		// Set the colour to be white
 		glColor3f(.5, .5, .5);
 		// Render the object
+		PatternSilh->Use();
 		glBegin(GL_LINE_STRIP);
 		glColor3f(1, 1, 0);
 		glVertex3f(MAPEDGEX + 15, 3, -MAPEDGEY);
@@ -2860,6 +2869,7 @@ void Display()
 		glVertex3f(MAPEDGEX + 15, 3, MAPEDGEY);
 		glVertex3f(MAPEDGEX + 15, 3, MAPEDGEY - IS3Shells * 2);
 		glEnd();
+		PatternSilh->Use(0);
 		glLineWidth(OUTLINE);
 		if (AbramShells > 0)
 			drawShell(MAPEDGEX + 15, -MAPEDGEY + AbramShells * 2, 180, 4);
@@ -2899,6 +2909,7 @@ void Display()
 		// Set the colour to be white
 		glColor3f(.5, .5, .5);
 		// Render the object
+		PatternSilh->Use();
 		if (AbramHP > 0)
 			drawAbram(AbramXY[0], -0.25, AbramXY[1], AbramHullAngle, AbramTurretAngle);
 		else
@@ -2923,8 +2934,8 @@ void Display()
 				shakeOnce = true;
 				shakeStartTime = Time;
 			}
-
 		}
+		PatternSilh->Use(0);
 		// Set the polygon mode to be filled triangles 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
@@ -3031,7 +3042,9 @@ void Display()
 					// Render the object
 					// draw map border/**/
 					//DO TOON SHADING
+					PatternSilh->Use();
 					drawCube(myMap.coord[i][j][0], myMap.coord[i][j][1], myMap.coord[i][j][2], myMap.color[i][j][0], myMap.color[i][j][1], myMap.color[i][j][2]);
+					PatternSilh->Use(0);
 					/**/glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 					//glShadeModel(GL_FLAT);
 					//glEnable(GL_LIGHTING);
@@ -3063,9 +3076,9 @@ void Display()
 					// Set the colour to be white
 					glColor3f(.5, .5, .5);
 					// Render the object
-
+					PatternSilh->Use();
 					drawTreeCube(myMap.coord[i][j][0], myMap.coord[i][j][1], myMap.angle[i][j], myMap.color[i][j][0]);
-
+					PatternSilh->Use(0);
 					// Set the polygon mode to be filled triangles
 					glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 					glShadeModel(GL_FLAT);
@@ -3103,7 +3116,9 @@ void Display()
 				// Set the colour to be white
 				glColor3f(.5, .5, .5);
 				// Render the object
+				PatternSilh->Use();
 				drawSmoke(smokeCoordBuffer[i][0], smokeCoordBuffer[i][1], 0, smokeAngleBuffer[i], 0.05, 0.59, 0.52, 0.48, smokeIDBuffer[i], smokeDurBuffer[i]);
+				PatternSilh->Use(0);
 				// Set the polygon mode to be filled triangles 
 				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 				glShadeModel(GL_FLAT);
@@ -3129,6 +3144,7 @@ void Display()
 		// Set the colour to be white
 		glColor3f(.5, .5, .5);
 		// Render the object
+		PatternSilh->Use();
 		for (int i = 0; i < CRATECAP; i++)
 		{
 			if (Crates[i].isActive)
@@ -3148,6 +3164,7 @@ void Display()
 					break;
 				}
 		}
+		PatternSilh->Use(0);
 		// Set the polygon mode to be filled triangles 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glShadeModel(GL_FLAT);
@@ -3199,7 +3216,9 @@ void Display()
 				// Set the colour to be white
 				glColor3f(.5, .5, .5);
 				// Render the object
+				PatternSilh->Use();
 				drawShell(Shells[i].x - ((Time - Shells[i].startTime) * SHELLSPEED * sin(Shells[i].angle * PI / 180)), Shells[i].y - ((Time - Shells[i].startTime) * SHELLSPEED * cos(Shells[i].angle * PI / 180)), Shells[i].angle);
+				PatternSilh->Use(0);
 				// Set the polygon mode to be filled triangles 
 				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 				glShadeModel(GL_FLAT);
@@ -4091,6 +4110,7 @@ void InitGraphics()
 	PatternGrass = new GLSLProgram();
 	PatternTree = new GLSLProgram();
 	PatternCamo = new GLSLProgram();
+	PatternSilh = new GLSLProgram();
 	bool valid = Pattern->Create((char *)"shaders/lighting.vert",/* (char *)"shaders/lighting.geom",*/ (char *)"shaders/lighting.frag");
 	if (!valid)
 	{
@@ -4138,6 +4158,18 @@ void InitGraphics()
 		fprintf(stderr, "Shader created.\n");
 	}
 	PatternCamo->SetVerbose(false);
+
+	bool validsilh = PatternSilh->Create((char *)"shaders/silhouette.vert", (char *)"shaders/silhouette.frag");
+	if (!validsilh)
+	{
+		fprintf(stderr, "Shader cannot be created!\n");
+		DoMainMenu(QUIT);
+	}
+	else
+	{
+		fprintf(stderr, "Shader created.\n");
+	}
+	PatternSilh->SetVerbose(false);
 
 	//load graphics
 	loadAll();

@@ -183,6 +183,7 @@
 	GLSLProgram *PatternGrass;
 	GLSLProgram *PatternTree;
 	GLSLProgram *PatternCamo;
+	GLSLProgram *PatternSilh;
 
 	float AbramTurretAngle = 0;
 	float AbramHullAngle = 180;
