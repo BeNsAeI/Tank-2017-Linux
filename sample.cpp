@@ -2562,18 +2562,19 @@ void Display()
 		//end of drawing map
 
 		// Push the GL attribute bits so that we don't wreck any settings
+		Pattern->Use();
 		glPushAttrib(GL_ALL_ATTRIB_BITS);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		// Enable polygon offsets, and offset filled polygons forward by 2.5
 		glEnable(GL_POLYGON_OFFSET_FILL);
-		glPolygonOffset(-2.5f, -2.5f);
+		glPolygonOffset(-2.5, -2.5);
 		// Set the render mode to be line rendering with a thick line width
 		glLineWidth(OUTLINE);
 		// Set the colour to be white
-		glColor3f(.75, .75, .75);
+		glColor3f(0.75, 0.75, 0.75);
 		// Render the object
 		switch (backgroundRand)
-		{
+		{	// BEHNAMSAEEDI
 		case 0:
 			drawHPCrate(0, 0);
 			break;
@@ -2595,6 +2596,7 @@ void Display()
 		}
 		// Set the polygon mode to be filled triangles 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		Pattern->Use(0);
 		//glShadeModel(GL_FLAT);
 		//glEnable(GL_LIGHTING);
 		////SetPointLight(GL_LIGHT2, 0, 15, 0, 0.75, 0.75, 0.75);
