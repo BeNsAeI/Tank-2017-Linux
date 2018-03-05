@@ -24,7 +24,8 @@ const int GLUIFALSE = { false };
 #define BODY 4.75
 #define CUBESIZE 6.0
 #define SPAWN 45
-#define TREESCALE 25
+#define TREESCALE 35
+#define ROCKSCALE 10
 #define SHELLSCALE 0.045
 #define SHELLSPEED 40000
 #define ROCKTHRESH 25
@@ -61,11 +62,13 @@ const int GLUIFALSE = { false };
 #define PLANSIZE 3
 #define AIMTHRESH 1
 #define AIENGAGE 30
-#define GRASSGRAINX 160
-#define GRASSGRAINY 140
-#define MENUMULTIPLIER 6
+#define GRASSGRAINX 32
+#define GRASSGRAINY 28
+#define MENUMULTIPLIER 4
 #define MENUXOFFSET 5
 #define MENUZOFFSET 0
 #define MENUYOFFSET -0.6
 #define BUSHSCALE 2
+#define GLFW_JOYSTICK_1   0
+#define GLFW_JOYSTICK_2   1
 #endif

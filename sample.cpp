@@ -4,9 +4,11 @@
 #include <ctype.h>
 #include <iostream>
 #include <vector>
-#include <math.h>
+#include <cmath>
+
 #ifdef WIN32
 #include <windows.h>
+
 #pragma warning(disable:4996)
 #endif
 #ifdef WIN32
@@ -20,8 +22,10 @@
 #include <GL/glu.h>
 #include "glut.h"
 #include <glm/glm.hpp>
+#include <GLFW/glfw3.h>
+#include <GLFW/glfw3native.h>
 #include "loader.h"
-#include <math.h>       /* cos */
+#include <cmath>       /* cos */
 #include <fstream>
 #include <time.h>       /* time */
 #include "glslprogram.h"
@@ -46,6 +50,7 @@
 #include "SimpleAI.h"
 #include "neuron.h"
 #include "Globals.h"
+#include "bmptotexture.h"
 
 #ifdef WIN32
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine, INT nCmdShow)
@@ -1223,6 +1228,7 @@ void drawCube(float X, float Y, float Z,float r,float g, float b)
 	//SetMaterial(0.25, 0.25, 0.25, 1.0);
 	glColor3f(0.25, 0.25, 0.25);
 	SetMaterial(0.25, 0.25, 0.25, 1.0);
+	glRotated(-90, 1, 0, 0);
 	glDrawArrays(GL_TRIANGLES, beginPoint, endPoint);
 	glPopMatrix();				// 2
 
@@ -1232,24 +1238,28 @@ void drawCube(float X, float Y, float Z,float r,float g, float b)
 	glPushMatrix();				// 3
 	glTranslatef(-0.55, -0.55, 0);
 	glScalef(0.48, 0.48,.95);
+	glRotated(-90, 1, 0, 0);
 	glDrawArrays(GL_TRIANGLES, beginPoint, endPoint);
 	glPopMatrix();				// 3
 
 	glPushMatrix();				// 4
 	glTranslatef(0.55, -0.55, 0);
 	glScalef(0.48, 0.48, .95);
+	glRotated(-90, 1, 0, 0);
 	glDrawArrays(GL_TRIANGLES, beginPoint, endPoint);
 	glPopMatrix();				// 4
 	
 	glPushMatrix();				// 5
 	glTranslatef(0, 0.55, -0.55);
 	glScalef(.95, 0.48, 0.48);
+	glRotated(-90, 1, 0, 0);
 	glDrawArrays(GL_TRIANGLES, beginPoint, endPoint);
 	glPopMatrix();				// 5
 
 	glPushMatrix();				// 6
 	glTranslatef(0, 0.55, 0.55);
 	glScalef(.95, 0.48, 0.48);
+	glRotated(-90, 1, 0, 0);
 	glDrawArrays(GL_TRIANGLES, beginPoint, endPoint);
 	glPopMatrix();				// 6
 
@@ -1266,9 +1276,10 @@ void drawTreeCube(float X, float Y,float angle, int index)
 	case 0:
 		glPushMatrix();
 			glTranslatef(X, 0, Y);	//movement
-			glRotatef(angle, 0, 1, 0);
-			glTranslatef(-8.5, -0.5, 6);
 			glScalef(TREESCALE, TREESCALE, TREESCALE);
+			glRotatef(angle, 0, 1, 0);
+			glTranslatef(-0.325, 0, 0.275);
+			
 			beginPoint = trees[0][START];
 			endPoint = 3960 - 2250;
 			glPushMatrix();
@@ -1289,12 +1300,11 @@ void drawTreeCube(float X, float Y,float angle, int index)
 		glPopMatrix();
 		break;
 	case 1:
-
 		glPushMatrix();
 			glTranslatef(X, 0, Y);	//movement
-			glRotatef(angle, 0, 1, 0);
-			glTranslatef(1, -0.5, 4);
 			glScalef(TREESCALE, TREESCALE, TREESCALE);
+			glRotatef(angle, 0, 1, 0);
+			glTranslatef(0, 0, 0.15);
 			beginPoint = trees[1][START];
 			endPoint = 5688 - 2022;
 			glPushMatrix();
@@ -1317,9 +1327,10 @@ void drawTreeCube(float X, float Y,float angle, int index)
 
 		glPushMatrix();
 			glTranslatef(X, 0, Y);	//movement
-			glRotatef(angle, 0, 1, 0);
-			glTranslatef(5.5, -0.5, 4);
 			glScalef(TREESCALE, TREESCALE, TREESCALE);
+			glScalef(1.25, 1.25, 1.25);
+			glRotatef(angle, 0, 1, 0);
+			glTranslatef(0.22, 0, 0.2);
 			beginPoint = trees[2][START];
 			endPoint = 4398 - 3525;
 			glPushMatrix();
@@ -1343,9 +1354,10 @@ void drawTreeCube(float X, float Y,float angle, int index)
 
 		glPushMatrix();
 			glTranslatef(X, 0, Y);	//movement
-			glRotatef(angle, 0, 1, 0);
-			glTranslatef(8.5, -0.5, 4);
 			glScalef(TREESCALE, TREESCALE, TREESCALE);
+			glScalef(1.5, 1.5, 1.5);
+			glRotatef(angle, 0, 1, 0);
+			glTranslatef(0.4, 0, 0.2);
 			beginPoint = trees[3][START];
 			endPoint = 3522 - 3000;
 			glPushMatrix();
@@ -1369,9 +1381,9 @@ void drawTreeCube(float X, float Y,float angle, int index)
 
 		glPushMatrix();
 			glTranslatef(X, 0, Y);	//movement
-			glRotatef(angle, 0, 1, 0);
-			glTranslatef(-6, 10.5, 4);
 			glScalef(TREESCALE, TREESCALE, TREESCALE);
+			glRotatef(angle, 0, 1, 0);
+			glTranslatef(-0.24, 0.42, 0.21);
 			beginPoint = trees[4][START];
 			endPoint = 4752 - 3816;
 			glPushMatrix();
@@ -1395,9 +1407,9 @@ void drawTreeCube(float X, float Y,float angle, int index)
 
 		glPushMatrix();
 			glTranslatef(X, 0, Y);	//movement
-			glRotatef(angle, 0, 1, 0);
-			glTranslatef(0, 10.5, 4);
 			glScalef(TREESCALE, TREESCALE, TREESCALE);
+			glRotatef(angle, 0, 1, 0);
+			glTranslatef(0, 0.42, 0.21);
 			beginPoint = trees[5][START];
 			endPoint = 6105 - 4668;
 			glPushMatrix();
@@ -1420,9 +1432,9 @@ void drawTreeCube(float X, float Y,float angle, int index)
 	case 6:
 		glPushMatrix();
 			glTranslatef(X, 0, Y);	//movement
-			glRotatef(angle, 0, 1, 0);
-			glTranslatef(6, 10.5, 4);
 			glScalef(TREESCALE, TREESCALE, TREESCALE);
+			glRotatef(angle, 0, 1, 0);
+			glTranslatef(0.24, 0.42, 0.21);
 			beginPoint = trees[6][START];
 			endPoint = 6030 - 4944;
 			glPushMatrix();
@@ -1443,12 +1455,9 @@ void drawTreeCube(float X, float Y,float angle, int index)
 		glPopMatrix();
 		break;
 	case 7:
-		PatternTree->SetUniformVariable((char *)"uMultR", (float)1);
-		PatternTree->SetUniformVariable((char *)"uMultG", (float)1);
-		PatternTree->SetUniformVariable((char *)"uMultB", (float)1);
 		glPushMatrix();
 		glTranslatef(X, 0, Y);	//movement
-		glScalef(TREESCALE / 2, TREESCALE / 2, TREESCALE / 2);
+		glScalef(ROCKSCALE, ROCKSCALE, ROCKSCALE);
 		glRotatef(angle, 0, 1, 0);
 		glTranslatef(0.75, 0, 0.25);
 		beginPoint = trees[7][START];
@@ -1462,11 +1471,8 @@ void drawTreeCube(float X, float Y,float angle, int index)
 		glPopMatrix();
 		break;
 	}
-	if (index < 4)
+	if (index > 1 && index < 7)
 	{
-		PatternTree->SetUniformVariable((char *)"uMultR", (float)3);
-		PatternTree->SetUniformVariable((char *)"uMultG", (float)1);
-		PatternTree->SetUniformVariable((char *)"uMultB", (float)3);
 		glPushMatrix();
 		glTranslatef(X, 0, Y);	//movement
 		glRotatef(angle, 0, 1, 0);
@@ -1613,9 +1619,6 @@ void drawMine(float X, float Y)
 }
 void drawGrass(float X, float Y)
 {
-	PatternTree->SetUniformVariable((char *)"uMultR", (float)3);
-	PatternTree->SetUniformVariable((char *)"uMultG", (float)1);
-	PatternTree->SetUniformVariable((char *)"uMultB", (float)3);
 	glPushMatrix();
 	glTranslatef(X, 0, Y);	//movement
 	glTranslatef(2, 0.5, 5);
@@ -2245,8 +2248,8 @@ void KeyHandler() {
 			for (int i = 0; i < 20; i++)
 			{
 				smokeIDBuffer[smokeIndex] = Time;
-				smokeCoordBuffer[smokeIndex][0] = AbramXY[0] - 5 * sin((AbramTurretAngle + AbramHullAngle) * PI / 180);
-				smokeCoordBuffer[smokeIndex][1] = AbramXY[1] - 5 * cos((AbramTurretAngle + AbramHullAngle) * PI / 180);
+				smokeCoordBuffer[smokeIndex][0] = AbramXY[0] - 5 * sin((AbramTurretAngle + AbramHullAngle) * PI / 180.0);
+				smokeCoordBuffer[smokeIndex][1] = AbramXY[1] - 5 * cos((AbramTurretAngle + AbramHullAngle) * PI / 180.0);
 				smokeDurBuffer[smokeIndex] = 0.015;
 				smokeAngleBuffer[smokeIndex] = rand() % 360;
 				smokeIDBufferSet[smokeIndex] = !smokeIDBufferSet[smokeIndex];
@@ -2278,8 +2281,8 @@ void KeyHandler() {
 			for (int i = 0; i < 20; i++)
 			{
 				smokeIDBuffer[smokeIndex] = Time;
-				smokeCoordBuffer[smokeIndex][0] = IS3XY[0] - 5 * sin((IS3TurretAngle + IS3HullAngle) * PI / 180);
-				smokeCoordBuffer[smokeIndex][1] = IS3XY[1] - 5 * cos((IS3TurretAngle + IS3HullAngle) * PI / 180);
+				smokeCoordBuffer[smokeIndex][0] = IS3XY[0] - 5 * sin((IS3TurretAngle + IS3HullAngle) * PI / 180.0);
+				smokeCoordBuffer[smokeIndex][1] = IS3XY[1] - 5 * cos((IS3TurretAngle + IS3HullAngle) * PI / 180.0);
 				smokeDurBuffer[smokeIndex] = 0.015;
 				smokeAngleBuffer[smokeIndex] = rand() % 360;
 				smokeIDBufferSet[smokeIndex] = !smokeIDBufferSet[smokeIndex];
@@ -2319,10 +2322,6 @@ void Display()
 		if (!clicked)
 			loading = true;
 	}
-	if (DebugOn != 0)
-	{
-		fprintf(stderr, "Display\n");
-	}
 
 	glutSetCursor(GLUT_CURSOR_NONE);
 	// set which window we want to do the graphics into:
@@ -2334,12 +2333,13 @@ void Display()
 
 	glDrawBuffer(GL_BACK);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_DEPTH_TEST);
 
-	if (DepthBufferOn != 0)
-		glEnable(GL_DEPTH_TEST);
+	/*if (DepthBufferOn != 0)
+		
 	else
 		glDisable(GL_DEPTH_TEST);
-
+		*/
 
 	// specify shading to be flat:
 
@@ -2363,9 +2363,9 @@ void Display()
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	if (WhichProjection == ORTHO)
+	/*if (WhichProjection == ORTHO)
 		glOrtho(-3., 3., -3., 3., 0.1, 1000.);
-	else
+	else*/
 		gluPerspective(90., 1., 0.1, 1000.);
 
 
@@ -2388,15 +2388,11 @@ void Display()
 
 
 	// uniformly scale the scene:
-
-	if (Scale < MINSCALE)
-		Scale = MINSCALE;
+	//if (Scale < MINSCALE)
+	//	Scale = MINSCALE;
 	glScalef((GLfloat)Scale, (GLfloat)Scale, (GLfloat)Scale);
-
-
 	// set the fog parameters:
-
-	if (DepthCueOn != 0)
+	/*if (DepthCueOn != 0)
 	{
 		glFogi(GL_FOG_MODE, FOGMODE);
 		glFogfv(GL_FOG_COLOR, FOGCOLOR);
@@ -2406,18 +2402,15 @@ void Display()
 		glEnable(GL_FOG);
 	}
 	else
-	{
+	{*/
 		glDisable(GL_FOG);
-	}
-
-
+//	}
 	// possibly draw the axes:
-
-	if (AxesOn == 0)
+	/*if (AxesOn == 0)
 	{
 		glColor3fv(&Colors[WhichColor][0]);
 		glCallList(AxesList);
-	}
+	}*/
 	// since we are using glScalef( ), be sure normals get unitized:
 
 	// draw the current object:
@@ -2427,8 +2420,6 @@ void Display()
 	if (res && isInMenu)
 	{
 		PatternGrass->Use();
-		PatternGrass->SetUniformVariable((char *)"uKa", (float)0.75);
-		PatternGrass->SetUniformVariable((char *)"uKd", (float)0.25);
 		float startx = 1+MAPEDGEX/2 + CUBESIZE;
 		float startz = MAPEDGEY/2 + CUBESIZE;
 		float endx = (-MAPEDGEX/2 - CUBESIZE);
@@ -2466,11 +2457,6 @@ void Display()
 		);
 		// draw map
 		Pattern->Use();
-		Pattern->SetUniformVariable((char *)"uKa", (float)0.5);
-		Pattern->SetUniformVariable((char *)"uKd", (float)0.5);
-		Pattern->SetUniformVariable((char *)"uX", (float)20);
-		Pattern->SetUniformVariable((char *)"uY", (float)50);
-		Pattern->SetUniformVariable((char *)"uZ", (float)35);
 		for (int i = 0; i < (2 * MAPEDGEX) / CUBESIZE + 2; i++)
 			drawCube(-MAPEDGEX - CUBESIZE / 2 - 2 + i*CUBESIZE, -MAPEDGEY - CUBESIZE, 0, 0.5, 0.5, 0.5);
 		for (int i = 0; i < (2 * MAPEDGEX) / CUBESIZE + 2; i++)
@@ -2515,11 +2501,6 @@ void Display()
 					//SetPointLight(GL_LIGHT1, 0, 60, 90, 0.65, 0.5, 0.5);
 					//glColor3f(0.0f, 0.0f, 0.0f);
 					Pattern->Use();
-					Pattern->SetUniformVariable((char *)"uKa", (float)0.5);
-					Pattern->SetUniformVariable((char *)"uKd", (float)0.5);
-					Pattern->SetUniformVariable((char *)"uX", (float)20);
-					Pattern->SetUniformVariable((char *)"uY", (float)50);
-					Pattern->SetUniformVariable((char *)"uZ", (float)35);
 					drawCube(myMap.coord[i][j][0], myMap.coord[i][j][1], myMap.coord[i][j][2], myMap.color[i][j][0], myMap.color[i][j][1], myMap.color[i][j][2]);
 					glPopAttrib();
 					//glDisable(GL_LIGHT1);
@@ -2550,8 +2531,6 @@ void Display()
 					//SetPointLight(GL_LIGHT1, 20, 50, 35, 0.9, 0.9, 0.9);
 					glColor3f(0.0f, 0.0f, 0.0f);
 					PatternTree->Use();
-					PatternTree->SetUniformVariable((char *)"uKa", (float)0.75);
-					PatternTree->SetUniformVariable((char *)"uKd", (float)0.5);
 					drawTreeCube(myMap.coord[i][j][0], myMap.coord[i][j][1], myMap.angle[i][j], myMap.color[i][j][0]);
 					PatternTree->Use(0);
 					glPopAttrib();
@@ -2575,6 +2554,8 @@ void Display()
 		glColor3f(.75, .75, .75);
 		// Render the object
 		PatternSilh->Use();
+		//BehnamSaeedi
+
 		switch (backgroundRand)
 		{
 		case 0:
@@ -2602,40 +2583,76 @@ void Display()
 		//glShadeModel(GL_FLAT);
 		//glEnable(GL_LIGHTING);
 		////SetPointLight(GL_LIGHT2, 0, 15, 0, 0.75, 0.75, 0.75);
-		Pattern->Use();
-		Pattern->SetUniformVariable((char *)"uKa", (float)1);
-		Pattern->SetUniformVariable((char *)"uKd", (float)0.125);
-		Pattern->SetUniformVariable((char *)"uX", (float)-20);
-		Pattern->SetUniformVariable((char *)"uY", (float)5);
-		Pattern->SetUniformVariable((char *)"uZ", (float)-10);
 		// Set the colour to the background
 		glColor3f(0.0f, 0.0f, 0.0f);
 		// Render the object
 		switch (backgroundRand)
 		{
 		case 0:
+			Pattern->Use();
 			drawHPCrate(0, 0);
+			Pattern->Use(0);
 			break;
 		case 1:
+			Pattern->Use();
 			drawSmokeCrate(0, 0);
+			Pattern->Use(0);
 			break;
 		case 2:
+			Pattern->Use();
 			drawAmmo(0, 0);
+			Pattern->Use(0);
 			break;
 		case 3:
+			PatternCamo->Use();
+			PatternCamo->SetUniformVariable((char *)"uKa", (float)1.0);
+			PatternCamo->SetUniformVariable((char *)"uKd", (float)0.95);
+			PatternCamo->SetUniformVariable((char *)"uX", (float)20.0);
+			PatternCamo->SetUniformVariable((char *)"uY", (float)50.0);
+			PatternCamo->SetUniformVariable((char *)"uZ", (float)35.0);
+
+			PatternCamo->SetUniformVariable((char *)"uAd", (float)0.25);
+			PatternCamo->SetUniformVariable((char *)"uBd", (float)0.75);
+
+			PatternCamo->SetUniformVariable((char *)"uNoiseAmp", (float)0.75);
+			PatternCamo->SetUniformVariable((char *)"uNoiseFreq", (float)0.15);
+
+			PatternCamo->SetUniformVariable((char *)"uTime", (float)fabs(sin(1000.0 * Time)));
+
+			PatternCamo->SetUniformVariable((char *)"Noise3", 0);
 			drawIS3(0, 0, 0, -45, -45);
+			PatternCamo->Use(0);
 			break;
 		case 4:
+			PatternCamo->Use();
+			PatternCamo->SetUniformVariable((char *)"uKa", (float)1.0);
+			PatternCamo->SetUniformVariable((char *)"uKd", (float)0.95);
+			PatternCamo->SetUniformVariable((char *)"uX", (float)20.0);
+			PatternCamo->SetUniformVariable((char *)"uY", (float)50.0);
+			PatternCamo->SetUniformVariable((char *)"uZ", (float)35.0);
+
+			PatternCamo->SetUniformVariable((char *)"uAd", (float)0.25);
+			PatternCamo->SetUniformVariable((char *)"uBd", (float)0.75);
+
+			PatternCamo->SetUniformVariable((char *)"uNoiseAmp", (float)0.75);
+			PatternCamo->SetUniformVariable((char *)"uNoiseFreq", (float)0.15);
+
+			PatternCamo->SetUniformVariable((char *)"uTime", (float)fabs(sin(1000.0 * Time)));
+
+			PatternCamo->SetUniformVariable((char *)"Noise3", 0);
 			drawAbram(0, 0, 0, -45, -45);
+			PatternCamo->Use(0);
 			break;
 		case 5:
+			Pattern->Use();
 			drawMine(0, 0);
+			Pattern->Use(0);
 			break;
 		}
 		// Pop the state changes off the attribute stack
 		// to set things back how they were
 		glPopAttrib();
-		Pattern->Use(0);
+		
 		//glDisable(GL_LIGHT2);
 		//glDisable(GL_LIGHTING);
 
@@ -2644,34 +2661,8 @@ void Display()
 	if (res && !isInMenu)
 	{
 		PatternGrass->Use();
-		PatternGrass->SetUniformVariable((char *)"uKa", (float)1);
-		PatternGrass->SetUniformVariable((char *)"uKd", (float)0.5);
-
-		float startx = MAPEDGEX + CUBESIZE;
-		float startz = MAPEDGEY + CUBESIZE;
-		float endx = (-MAPEDGEX - CUBESIZE);
-		float endz = (-MAPEDGEY - CUBESIZE);
-		float lengthx = startx - endx;
-		float lengthz = startz - endz;
-		int grainX = GRASSGRAINX;
-		int grainY = GRASSGRAINY;
-		glEnable(GL_NORMALIZE);
-		glBegin(GL_QUADS);
-		glPushMatrix();
-		//SetMaterial(0.05, 0.05, 0, 1.0);
-		glColor3f(0.1, 0.1, 0.0);
-		for (int i = 0; i < grainX; i++)
-		{
-			for (int j = 0; j < grainY; j++)
-			{
-				glVertex3f(startx - i*(lengthx) / grainX, MENUYOFFSET, startz - j*(lengthz) / grainY);
-				glVertex3f(startx - i*(lengthx) / grainX, MENUYOFFSET, startz - (j + 1)*(lengthz) / grainY);
-				glVertex3f(startx - (i + 1)*(lengthx) / grainX, MENUYOFFSET, startz - (j + 1)*(lengthz) / grainY);
-				glVertex3f(startx - (i + 1)*(lengthx) / grainX, MENUYOFFSET, startz - j*(lengthz) / grainY);
-			}
-		}
-		glPopMatrix();
-		glEnd();
+		//draw grass
+		glCallList(BoxList);
 		PatternGrass->Use(0);
 		glEnableVertexAttribArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, VertexVBOID);
@@ -2687,8 +2678,10 @@ void Display()
 		{
 			myAIKB.agent->getMove(myAIKB.AIID, keyBuffer);
 		}
-		KeyHandler();
 
+		gamepad();
+		KeyHandler();
+		
 		if (shake)
 		{
 			if ((Time - shakeStartTime) < shakeDuration)
@@ -2715,12 +2708,12 @@ void Display()
 					glColor3f(.5, .5, .5);
 					// Render the object
 					PatternSilh->Use();
-					drawExplosion(AbramXY[0], AbramXY[1], 0, 0, 0.5, 1 - abs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * abs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
-					drawExplosion(AbramXY[0], AbramXY[1], 0, 60, 0.5, 1 - abs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * abs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
-					drawExplosion(AbramXY[0], AbramXY[1], 0, 120, 0.5, 1 - abs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * abs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
-					drawExplosion(AbramXY[0], AbramXY[1], 0, 180, 0.5, 1 - abs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * abs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
-					drawExplosion(AbramXY[0], AbramXY[1], 0, 240, 0.5, 1 - abs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * abs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
-					drawExplosion(AbramXY[0], AbramXY[1], 0, 300, 0.5, 1 - abs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * abs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
+					drawExplosion(AbramXY[0], AbramXY[1], 0, 0, 0.5, 1 - fabs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * fabs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
+					drawExplosion(AbramXY[0], AbramXY[1], 0, 60, 0.5, 1 - fabs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * fabs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
+					drawExplosion(AbramXY[0], AbramXY[1], 0, 120, 0.5, 1 - fabs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * fabs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
+					drawExplosion(AbramXY[0], AbramXY[1], 0, 180, 0.5, 1 - fabs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * fabs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
+					drawExplosion(AbramXY[0], AbramXY[1], 0, 240, 0.5, 1 - fabs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * fabs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
+					drawExplosion(AbramXY[0], AbramXY[1], 0, 300, 0.5, 1 - fabs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * fabs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
 					PatternSilh->Use(0);
 					// Set the polygon mode to be filled triangles 
 					glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -2728,18 +2721,13 @@ void Display()
 					//glEnable(GL_LIGHTING);
 					////SetPointLight(GL_LIGHT1, 20, 50, 35, 0.75, 0.75, 0.75);
 					Pattern->Use();
-					Pattern->SetUniformVariable((char *)"uKa", (float)1);
-					Pattern->SetUniformVariable((char *)"uKd", (float)0.95);
-					Pattern->SetUniformVariable((char *)"uX", (float)20);
-					Pattern->SetUniformVariable((char *)"uY", (float)50);
-					Pattern->SetUniformVariable((char *)"uZ", (float)35);
 					glColor3f(0.0f, 0.0f, 0.0f);
-					drawExplosion(AbramXY[0], AbramXY[1], 0, 0, 0.5, 1 - abs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * abs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
-					drawExplosion(AbramXY[0], AbramXY[1], 0, 60, 0.5, 1 - abs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * abs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
-					drawExplosion(AbramXY[0], AbramXY[1], 0, 120, 0.5, 1 - abs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * abs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
-					drawExplosion(AbramXY[0], AbramXY[1], 0, 180, 0.5, 1 - abs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * abs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
-					drawExplosion(AbramXY[0], AbramXY[1], 0, 240, 0.5, 1 - abs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * abs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
-					drawExplosion(AbramXY[0], AbramXY[1], 0, 300, 0.5, 1 - abs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * abs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
+					drawExplosion(AbramXY[0], AbramXY[1], 0, 0, 0.5, 1 - fabs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * fabs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
+					drawExplosion(AbramXY[0], AbramXY[1], 0, 60, 0.5, 1 - fabs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * fabs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
+					drawExplosion(AbramXY[0], AbramXY[1], 0, 120, 0.5, 1 - fabs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * fabs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
+					drawExplosion(AbramXY[0], AbramXY[1], 0, 180, 0.5, 1 - fabs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * fabs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
+					drawExplosion(AbramXY[0], AbramXY[1], 0, 240, 0.5, 1 - fabs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * fabs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
+					drawExplosion(AbramXY[0], AbramXY[1], 0, 300, 0.5, 1 - fabs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * fabs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
 					glPopAttrib();
 					Pattern->Use(0);
 					//glDisable(GL_LIGHT1);
@@ -2760,12 +2748,12 @@ void Display()
 					glColor3f(.5, .5, .5);
 					// Render the object
 					PatternSilh->Use();
-					drawExplosion(IS3XY[0], IS3XY[1], 0, 0, 0.5, 1 - abs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * abs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
-					drawExplosion(IS3XY[0], IS3XY[1], 0, 60, 0.5, 1 - abs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * abs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
-					drawExplosion(IS3XY[0], IS3XY[1], 0, 120, 0.5, 1 - abs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * abs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
-					drawExplosion(IS3XY[0], IS3XY[1], 0, 180, 0.5, 1 - abs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * abs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
-					drawExplosion(IS3XY[0], IS3XY[1], 0, 240, 0.5, 1 - abs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * abs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
-					drawExplosion(IS3XY[0], IS3XY[1], 0, 300, 0.5, 1 - abs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * abs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
+					drawExplosion(IS3XY[0], IS3XY[1], 0, 0, 0.5, 1 - fabs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * fabs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
+					drawExplosion(IS3XY[0], IS3XY[1], 0, 60, 0.5, 1 - fabs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * fabs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
+					drawExplosion(IS3XY[0], IS3XY[1], 0, 120, 0.5, 1 - fabs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * fabs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
+					drawExplosion(IS3XY[0], IS3XY[1], 0, 180, 0.5, 1 - fabs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * fabs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
+					drawExplosion(IS3XY[0], IS3XY[1], 0, 240, 0.5, 1 - fabs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * fabs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
+					drawExplosion(IS3XY[0], IS3XY[1], 0, 300, 0.5, 1 - fabs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * fabs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
 					PatternSilh->Use(0);
 					// Set the polygon mode to be filled triangles 
 					glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -2773,18 +2761,13 @@ void Display()
 					//glEnable(GL_LIGHTING);
 					////SetPointLight(GL_LIGHT1, 20, 50, 35, 0.75, 0.75, 0.75);
 					Pattern->Use();
-					Pattern->SetUniformVariable((char *)"uKa", (float)1);
-					Pattern->SetUniformVariable((char *)"uKd", (float)0.95);
-					Pattern->SetUniformVariable((char *)"uX", (float)20);
-					Pattern->SetUniformVariable((char *)"uY", (float)50);
-					Pattern->SetUniformVariable((char *)"uZ", (float)35);
 					glColor3f(0.0f, 0.0f, 0.0f);
-					drawExplosion(IS3XY[0], IS3XY[1], 0, 0, 0.5, 1 - abs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * abs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
-					drawExplosion(IS3XY[0], IS3XY[1], 0, 60, 0.5, 1 - abs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * abs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
-					drawExplosion(IS3XY[0], IS3XY[1], 0, 120, 0.5, 1 - abs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * abs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
-					drawExplosion(IS3XY[0], IS3XY[1], 0, 180, 0.5, 1 - abs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * abs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
-					drawExplosion(IS3XY[0], IS3XY[1], 0, 240, 0.5, 1 - abs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * abs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
-					drawExplosion(IS3XY[0], IS3XY[1], 0, 300, 0.5, 1 - abs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * abs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
+					drawExplosion(IS3XY[0], IS3XY[1], 0, 0, 0.5, 1 - fabs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * fabs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
+					drawExplosion(IS3XY[0], IS3XY[1], 0, 60, 0.5, 1 - fabs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * fabs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
+					drawExplosion(IS3XY[0], IS3XY[1], 0, 120, 0.5, 1 - fabs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * fabs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
+					drawExplosion(IS3XY[0], IS3XY[1], 0, 180, 0.5, 1 - fabs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * fabs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
+					drawExplosion(IS3XY[0], IS3XY[1], 0, 240, 0.5, 1 - fabs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * fabs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
+					drawExplosion(IS3XY[0], IS3XY[1], 0, 300, 0.5, 1 - fabs(sin((Time - shakeStartTime) * 500)), 0.75 - 3 * fabs(sin((Time - shakeStartTime) * 500)) / 4, 0, shakeStartTime, shakeDuration / 2);
 					glPopAttrib();
 					Pattern->Use(0);
 					//glDisable(GL_LIGHT1);
@@ -2833,11 +2816,6 @@ void Display()
 		//glEnable(GL_LIGHTING);
 		////SetPointLight(GL_LIGHT1, 20, 50, 35, 0.75, 0.75, 0.75);
 		Pattern->Use();
-		Pattern->SetUniformVariable((char *)"uKa", (float)1);
-		Pattern->SetUniformVariable((char *)"uKd", (float)0.95);
-		Pattern->SetUniformVariable((char *)"uX", (float)20);
-		Pattern->SetUniformVariable((char *)"uY", (float)50);
-		Pattern->SetUniformVariable((char *)"uZ", (float)35);
 		glColor3f(0.0f, 0.0f, 0.0f);
 		if (AbramSmoke > 0)
 			drawSmokeCrate(MAPEDGEX + 22, -MAPEDGEY + AbramSmoke * 7 + 1, 90);
@@ -2881,11 +2859,6 @@ void Display()
 		glEnable(GL_LIGHTING);
 		////SetPointLight(GL_LIGHT1, 20, 50, 35, 0.75, 0.75, 0.75);
 		Pattern->Use();
-		Pattern->SetUniformVariable((char *)"uKa", (float)1);
-		Pattern->SetUniformVariable((char *)"uKd", (float)0.95);
-		Pattern->SetUniformVariable((char *)"uX", (float)20);
-		Pattern->SetUniformVariable((char *)"uY", (float)50);
-		Pattern->SetUniformVariable((char *)"uZ", (float)35);
 		glColor3f(0.0f, 0.0f, 0.0f);
 		if (AbramShells > 0)
 			drawShell(MAPEDGEX + 15, -MAPEDGEY + AbramShells * 2, 180, 4);
@@ -2939,16 +2912,43 @@ void Display()
 		// Set the polygon mode to be filled triangles 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-		glShadeModel(GL_FLAT);
+		//glShadeModel(GL_FLAT);
 		//glEnable(GL_LIGHTING);
 
-		//SetPointLight(GL_LIGHT0, 20, 50, 35, 0.75, 0.75, 0.75);
+		//SetPointLight(GL_LIGHT0, 20, 50, 35, 0.25, 0.25, 0.25);
+
+		//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		/*glActiveTexture(GL_TEXTURE0);
+		glEnable(GL_TEXTURE_2D);
+		glGenTextures(1, &tex0);
+		glBindTexture(GL_TEXTURE_2D, tex0);
+		glBindTexture(GL_TEXTURE0, tex0);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		glTexImage2D(GL_TEXTURE_2D,
+			0,
+			GL_RGB,
+			width,
+			height,
+			0,
+			GL_RGB,
+			GL_UNSIGNED_BYTE,
+			Texture
+		);
+		glGenerateMipmap(GL_TEXTURE_2D);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, tex0);*/
+
 		PatternCamo->Use();
-		PatternCamo->SetUniformVariable((char *)"uKa", (float)1);
+		PatternCamo->SetUniformVariable((char *)"uKa", (float)1.0);
 		PatternCamo->SetUniformVariable((char *)"uKd", (float)0.95);
-		PatternCamo->SetUniformVariable((char *)"uX", (float)20);
-		PatternCamo->SetUniformVariable((char *)"uY", (float)50);
-		PatternCamo->SetUniformVariable((char *)"uZ", (float)35);
+		PatternCamo->SetUniformVariable((char *)"uX", (float)20.0);
+		PatternCamo->SetUniformVariable((char *)"uY", (float)50.0);
+		PatternCamo->SetUniformVariable((char *)"uZ", (float)35.0);
 
 		PatternCamo->SetUniformVariable((char *)"uAd", (float)0.25);
 		PatternCamo->SetUniformVariable((char *)"uBd", (float)0.75);
@@ -2956,7 +2956,7 @@ void Display()
 		PatternCamo->SetUniformVariable((char *)"uNoiseAmp", (float)0.75);
 		PatternCamo->SetUniformVariable((char *)"uNoiseFreq", (float)0.15);
 		
-		PatternCamo->SetUniformVariable((char *)"uTime", (float)abs(sin(5000*Time)));
+		PatternCamo->SetUniformVariable((char *)"uTime", (float)fabs(sin(1000*Time)));
 
 		PatternCamo->SetUniformVariable((char *)"Noise3", 0);
 
@@ -2966,12 +2966,12 @@ void Display()
 		if (AbramHP > 0)
 		{
 			PatternCamo->SetUniformVariable((char *)"uTol", (float)0);
-			PatternCamo->SetUniformVariable((char *)"uAlpha", (float)1);
+			PatternCamo->SetUniformVariable((char *)"uAlpha", (float)1.0);
 			drawAbram(AbramXY[0], -0.25, AbramXY[1], AbramHullAngle, AbramTurretAngle);
 		}
 		else
 		{
-			PatternCamo->SetUniformVariable((char *)"uTol", (float)0.5);
+			PatternCamo->SetUniformVariable((char *)"uTol", (float)0.25);
 			PatternCamo->SetUniformVariable((char *)"uAlpha", (float)0);
 			drawAbramDead(AbramXY[0], -0.25, AbramXY[1], AbramHullAngle, AbramTurretAngle);
 		}
@@ -2979,29 +2979,24 @@ void Display()
 		if (IS3HP > 0)
 		{
 			PatternCamo->SetUniformVariable((char *)"uTol", (float)0);
-			PatternCamo->SetUniformVariable((char *)"uAlpha", (float)1);
+			PatternCamo->SetUniformVariable((char *)"uAlpha", (float)1.0);
 			drawIS3(IS3XY[0], -0.25, IS3XY[1], IS3HullAngle, IS3TurretAngle);
 		}
 		else
 		{
-			PatternCamo->SetUniformVariable((char *)"uTol", (float)0.5);
+			PatternCamo->SetUniformVariable((char *)"uTol", (float)0.25);
 			PatternCamo->SetUniformVariable((char *)"uAlpha", (float)0);
 			drawIS3Dead(IS3XY[0], -0.25, IS3XY[1], IS3HullAngle, IS3TurretAngle);
 		}
-		//PatternCamo->Use(0);
 		// Pop the state changes off the attribute stack
 		// to set things back how they were
 		glPopAttrib();
 		PatternCamo->Use(0);
 		//glDisable(GL_LIGHT0);
 		//glDisable(GL_LIGHTING);
+		//glDisable(GL_TEXTURE_2D);
 
 		Pattern->Use();
-		Pattern->SetUniformVariable((char *)"uKa", (float)0.5);
-		Pattern->SetUniformVariable((char *)"uKd", (float)0.5);
-		Pattern->SetUniformVariable((char *)"uX", (float)20);
-		Pattern->SetUniformVariable((char *)"uY", (float)50);
-		Pattern->SetUniformVariable((char *)"uZ", (float)35);
 		for (int i = 0; i < (2 * MAPEDGEX) / CUBESIZE + 2; i++)
 			drawCube(-MAPEDGEX - CUBESIZE / 2 - 2 + i*CUBESIZE, -MAPEDGEY - CUBESIZE, 0, 0.5, 0.5, 0.5);
 		for (int i = 0; i < (2 * MAPEDGEX) / CUBESIZE + 2; i++)
@@ -3051,11 +3046,6 @@ void Display()
 					//SetPointLight(GL_LIGHT1, 0, 60, 90, 0.65, 0.5, 0.5);
 					//glColor3f(0.0f, 0.0f, 0.0f);
 					Pattern->Use();
-					Pattern->SetUniformVariable((char *)"uKa", (float)0.5);
-					Pattern->SetUniformVariable((char *)"uKd", (float)0.5);
-					Pattern->SetUniformVariable((char *)"uX", (float)20);
-					Pattern->SetUniformVariable((char *)"uY", (float)50);
-					Pattern->SetUniformVariable((char *)"uZ", (float)35);
 					drawCube(myMap.coord[i][j][0], myMap.coord[i][j][1], myMap.coord[i][j][2], myMap.color[i][j][0], myMap.color[i][j][1], myMap.color[i][j][2]);
 					glPopAttrib();
 					//glDisable(GL_LIGHT1);
@@ -3086,11 +3076,6 @@ void Display()
 					//SetPointLight(GL_LIGHT1, 20, 50, 35, 0.9, 0.9, 0.9);
 					glColor3f(0.0f, 0.0f, 0.0f);
 					PatternTree->Use();
-					PatternTree->SetUniformVariable((char *)"uKa", (float)0.75);
-					PatternTree->SetUniformVariable((char *)"uKd", (float)0.5);
-					PatternTree->SetUniformVariable((char *)"uMultR", (float)1.3);
-					PatternTree->SetUniformVariable((char *)"uMultG", (float)1.25);
-					PatternTree->SetUniformVariable((char *)"uMultB", (float)3);
 					drawTreeCube(myMap.coord[i][j][0], myMap.coord[i][j][1], myMap.angle[i][j], myMap.color[i][j][0]);
 					PatternTree->Use(0);
 					glPopAttrib();
@@ -3171,11 +3156,6 @@ void Display()
 		//glEnable(GL_LIGHTING);
 		//SetPointLight(GL_LIGHT1, 20, 50, 35, 0.75, 0.75, 0.75);
 		Pattern->Use();
-		Pattern->SetUniformVariable((char *)"uKa", (float)1);
-		Pattern->SetUniformVariable((char *)"uKd", (float)0.95);
-		Pattern->SetUniformVariable((char *)"uX", (float)20);
-		Pattern->SetUniformVariable((char *)"uY", (float)50);
-		Pattern->SetUniformVariable((char *)"uZ", (float)35);
 		glColor3f(0.0f, 0.0f, 0.0f);
 		for (int i = 0; i < 9; i++)
 		{
@@ -3217,7 +3197,7 @@ void Display()
 				glColor3f(.5, .5, .5);
 				// Render the object
 				PatternSilh->Use();
-				drawShell(Shells[i].x - ((Time - Shells[i].startTime) * SHELLSPEED * sin(Shells[i].angle * PI / 180)), Shells[i].y - ((Time - Shells[i].startTime) * SHELLSPEED * cos(Shells[i].angle * PI / 180)), Shells[i].angle);
+				drawShell(Shells[i].x - ((Time - Shells[i].startTime) * SHELLSPEED * sin(Shells[i].angle * PI / 180.0)), Shells[i].y - ((Time - Shells[i].startTime) * SHELLSPEED * cos(Shells[i].angle * PI / 180.0)), Shells[i].angle);
 				PatternSilh->Use(0);
 				// Set the polygon mode to be filled triangles 
 				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -3225,45 +3205,45 @@ void Display()
 				//glEnable(GL_LIGHTING);
 				SetPointLight(GL_LIGHT1, 20, 50, 35, 0.75, 0.75, 0.75);
 				glColor3f(0.0f, 0.0f, 0.0f);
-				drawShell(Shells[i].x - ((Time - Shells[i].startTime) * SHELLSPEED * sin(Shells[i].angle * PI / 180)), Shells[i].y - ((Time - Shells[i].startTime) * SHELLSPEED * cos(Shells[i].angle * PI / 180)), Shells[i].angle);
+				drawShell(Shells[i].x - ((Time - Shells[i].startTime) * SHELLSPEED * sin(Shells[i].angle * PI / 180.0)), Shells[i].y - ((Time - Shells[i].startTime) * SHELLSPEED * cos(Shells[i].angle * PI / 180.0)), Shells[i].angle);
 				glPopAttrib();
 				glDisable(GL_LIGHT1);
 				glDisable(GL_LIGHTING);
 				// Calculate trajectory:
 				if (
-					((Shells[i].x - ((Time - Shells[i].startTime) * SHELLSPEED * sin(Shells[i].angle * PI / 180)) < IS3XY[0] + BODY) && (Shells[i].x - ((Time - Shells[i].startTime) * SHELLSPEED * sin(Shells[i].angle * PI / 180)) > IS3XY[0] - BODY)) &&
-					((Shells[i].y - ((Time - Shells[i].startTime) * SHELLSPEED * cos(Shells[i].angle * PI / 180)) < IS3XY[1] + BODY) && (Shells[i].y - ((Time - Shells[i].startTime) * SHELLSPEED * cos(Shells[i].angle * PI / 180)) > IS3XY[1] - BODY)) &&
+					((Shells[i].x - ((Time - Shells[i].startTime) * SHELLSPEED * sin(Shells[i].angle * PI / 180.0)) < IS3XY[0] + BODY) && (Shells[i].x - ((Time - Shells[i].startTime) * SHELLSPEED * sin(Shells[i].angle * PI / 180.0)) > IS3XY[0] - BODY)) &&
+					((Shells[i].y - ((Time - Shells[i].startTime) * SHELLSPEED * cos(Shells[i].angle * PI / 180.0)) < IS3XY[1] + BODY) && (Shells[i].y - ((Time - Shells[i].startTime) * SHELLSPEED * cos(Shells[i].angle * PI / 180.0)) > IS3XY[1] - BODY)) &&
 					Shells[i].shooterId == ABRAMID
 					)
 				{
 					//spark
 					//Dammage:
-					IS3HP -= 2 * abs(abs(sin((Shells[i].angle - IS3HullAngle)* PI / 180)) - abs(cos((Shells[i].angle - IS3HullAngle)* PI / 180)));
+					IS3HP -= 2 * fabs(fabs(sin((Shells[i].angle - IS3HullAngle)* PI / 180.0)) - fabs(cos((Shells[i].angle - IS3HullAngle)* PI / 180.0)));
 					// Bounce!
-					if (abs(abs(sin((Shells[i].angle - IS3HullAngle)* PI / 180)) - abs(cos((Shells[i].angle - IS3HullAngle)* PI / 180))) < BOUNCETHRESH)
+					if (fabs(fabs(sin((Shells[i].angle - IS3HullAngle)* PI / 180.0)) - fabs(cos((Shells[i].angle - IS3HullAngle)* PI / 180.0))) < BOUNCETHRESH)
 					{
 						alSourcePlay(Sources[9]);
 						if (IS3XY[0] > Shells[i].x)
 						{
 							if (IS3XY[1] > Shells[i].y)
 								if (IS3XY[0] - Shells[i].x >= IS3XY[1] - Shells[i].y)
-									if (abs(sin((Shells[i].angle - IS3HullAngle)* PI / 180)) - abs(cos((Shells[i].angle - IS3HullAngle)* PI / 180)) >= 0)
+									if (fabs(sin((Shells[i].angle - IS3HullAngle)* PI / 180.0)) - fabs(cos((Shells[i].angle - IS3HullAngle)* PI / 180.0)) >= 0)
 										Shells[i].angle += 90;
 									else
 										Shells[i].angle -= 90;
 								else
-									if (abs(sin((Shells[i].angle - IS3HullAngle)* PI / 180)) - abs(cos((Shells[i].angle - IS3HullAngle)* PI / 180)) >= 0)
+									if (fabs(sin((Shells[i].angle - IS3HullAngle)* PI / 180.0)) - fabs(cos((Shells[i].angle - IS3HullAngle)* PI / 180.0)) >= 0)
 										Shells[i].angle -= 90;
 									else
 										Shells[i].angle += 90;
 							else
 								if (IS3XY[0] - Shells[i].x >= IS3XY[1] - Shells[i].y)
-									if (abs(sin((Shells[i].angle - IS3HullAngle)* PI / 180)) - abs(cos((Shells[i].angle - IS3HullAngle)* PI / 180)) >= 0)
+									if (fabs(sin((Shells[i].angle - IS3HullAngle)* PI / 180.0)) - fabs(cos((Shells[i].angle - IS3HullAngle)* PI / 180.0)) >= 0)
 										Shells[i].angle -= 90;
 									else
 										Shells[i].angle += 90;
 								else
-									if (abs(sin((Shells[i].angle - IS3HullAngle)* PI / 180)) - abs(cos((Shells[i].angle - IS3HullAngle)* PI / 180)) >= 0)
+									if (fabs(sin((Shells[i].angle - IS3HullAngle)* PI / 180.0)) - fabs(cos((Shells[i].angle - IS3HullAngle)* PI / 180.0)) >= 0)
 										Shells[i].angle += 90;
 									else
 										Shells[i].angle -= 90;
@@ -3292,39 +3272,39 @@ void Display()
 					}
 				}
 				if (
-					((Shells[i].x - ((Time - Shells[i].startTime) * SHELLSPEED * sin(Shells[i].angle * PI / 180)) < AbramXY[0] + BODY) && (Shells[i].x - ((Time - Shells[i].startTime) * SHELLSPEED * sin(Shells[i].angle * PI / 180)) > AbramXY[0] - BODY)) &&
-					((Shells[i].y - ((Time - Shells[i].startTime) * SHELLSPEED * cos(Shells[i].angle * PI / 180)) < AbramXY[1] + BODY) && (Shells[i].y - ((Time - Shells[i].startTime) * SHELLSPEED * cos(Shells[i].angle * PI / 180)) > AbramXY[1] - BODY)) &&
+					((Shells[i].x - ((Time - Shells[i].startTime) * SHELLSPEED * sin(Shells[i].angle * PI / 180.0)) < AbramXY[0] + BODY) && (Shells[i].x - ((Time - Shells[i].startTime) * SHELLSPEED * sin(Shells[i].angle * PI / 180.0)) > AbramXY[0] - BODY)) &&
+					((Shells[i].y - ((Time - Shells[i].startTime) * SHELLSPEED * cos(Shells[i].angle * PI / 180.0)) < AbramXY[1] + BODY) && (Shells[i].y - ((Time - Shells[i].startTime) * SHELLSPEED * cos(Shells[i].angle * PI / 180.0)) > AbramXY[1] - BODY)) &&
 					Shells[i].shooterId == IS3ID
 					)
 				{
 					//spark
 					//Dammage:
-					AbramHP -= 2 * abs(abs(sin((Shells[i].angle - AbramHullAngle)* PI / 180)) - abs(cos((Shells[i].angle - AbramHullAngle)* PI / 180)));
+					AbramHP -= 2 * fabs(fabs(sin((Shells[i].angle - AbramHullAngle)* PI / 180.0)) - fabs(cos((Shells[i].angle - AbramHullAngle)* PI / 180.0)));
 					// Bounce!
-					if (abs(abs(sin((Shells[i].angle - AbramHullAngle)* PI / 180)) - abs(cos((Shells[i].angle - AbramHullAngle)* PI / 180))) < BOUNCETHRESH)
+					if (fabs(fabs(sin((Shells[i].angle - AbramHullAngle)* PI / 180.0)) - fabs(cos((Shells[i].angle - AbramHullAngle)* PI / 180.0))) < BOUNCETHRESH)
 					{
 						alSourcePlay(Sources[9]);
 						if (AbramXY[0] > Shells[i].x)
 						{
 							if (AbramXY[1] > Shells[i].y)
 								if (AbramXY[0] - Shells[i].x >= AbramXY[1] - Shells[i].y)
-									if (abs(sin((Shells[i].angle - AbramHullAngle)* PI / 180)) - abs(cos((Shells[i].angle - AbramHullAngle)* PI / 180)) >= 0)
+									if (fabs(sin((Shells[i].angle - AbramHullAngle)* PI / 180.0)) - fabs(cos((Shells[i].angle - AbramHullAngle)* PI / 180.0)) >= 0)
 										Shells[i].angle += 90;
 									else
 										Shells[i].angle -= 90;
 								else
-									if (abs(sin((Shells[i].angle - AbramHullAngle)* PI / 180)) - abs(cos((Shells[i].angle - AbramHullAngle)* PI / 180)) >= 0)
+									if (fabs(sin((Shells[i].angle - AbramHullAngle)* PI / 180.0)) - fabs(cos((Shells[i].angle - AbramHullAngle)* PI / 180.0)) >= 0)
 										Shells[i].angle -= 90;
 									else
 										Shells[i].angle += 90;
 							else
 								if (AbramXY[0] - Shells[i].x >= AbramXY[1] - Shells[i].y)
-									if (abs(sin((Shells[i].angle - AbramHullAngle)* PI / 180)) - abs(cos((Shells[i].angle - AbramHullAngle)* PI / 180)) >= 0)
+									if (fabs(sin((Shells[i].angle - AbramHullAngle)* PI / 180.0)) - fabs(cos((Shells[i].angle - AbramHullAngle)* PI / 180.0)) >= 0)
 										Shells[i].angle -= 90;
 									else
 										Shells[i].angle += 90;
 								else
-									if (abs(sin((Shells[i].angle - AbramHullAngle)* PI / 180)) - abs(cos((Shells[i].angle - AbramHullAngle)* PI / 180)) >= 0)
+									if (fabs(sin((Shells[i].angle - AbramHullAngle)* PI / 180.0)) - fabs(cos((Shells[i].angle - AbramHullAngle)* PI / 180.0)) >= 0)
 										Shells[i].angle += 90;
 									else
 										Shells[i].angle -= 90;
@@ -3353,18 +3333,18 @@ void Display()
 					}
 				}
 				if (
-					(Shells[i].x - ((Time - Shells[i].startTime) * SHELLSPEED * sin(Shells[i].angle * PI / 180)) < -MAPEDGEX) ||
-					(Shells[i].x - ((Time - Shells[i].startTime) * SHELLSPEED * sin(Shells[i].angle * PI / 180)) > MAPEDGEX) ||
-					(Shells[i].y - ((Time - Shells[i].startTime) * SHELLSPEED * cos(Shells[i].angle * PI / 180)) < -MAPEDGEY) ||
-					(Shells[i].y - ((Time - Shells[i].startTime) * SHELLSPEED * cos(Shells[i].angle * PI / 180)) > MAPEDGEY)
+					(Shells[i].x - ((Time - Shells[i].startTime) * SHELLSPEED * sin(Shells[i].angle * PI / 180.0)) < -MAPEDGEX) ||
+					(Shells[i].x - ((Time - Shells[i].startTime) * SHELLSPEED * sin(Shells[i].angle * PI / 180.0)) > MAPEDGEX) ||
+					(Shells[i].y - ((Time - Shells[i].startTime) * SHELLSPEED * cos(Shells[i].angle * PI / 180.0)) < -MAPEDGEY) ||
+					(Shells[i].y - ((Time - Shells[i].startTime) * SHELLSPEED * cos(Shells[i].angle * PI / 180.0)) > MAPEDGEY)
 					)
 					Shells[i].active = false;
 				int tmpi;
 				int tmpj;
 				//CrateCollisionModel
 				int cratecheck = CrateCollisionModel(Shells[i].x, Shells[i].y,
-					(Time - Shells[i].startTime) * SHELLSPEED * sin(Shells[i].angle * PI / 180),
-					(Time - Shells[i].startTime) * SHELLSPEED * cos(Shells[i].angle * PI / 180),
+					(Time - Shells[i].startTime) * SHELLSPEED * sin(Shells[i].angle * PI / 180.0),
+					(Time - Shells[i].startTime) * SHELLSPEED * cos(Shells[i].angle * PI / 180.0),
 					-1
 				);
 				if (cratecheck != CRATECAP)
@@ -3374,8 +3354,8 @@ void Display()
 				}
 				if (
 					MapCollisionModel(Shells[i].x, Shells[i].y,
-					(Time - Shells[i].startTime) * SHELLSPEED * sin(Shells[i].angle * PI / 180),
-						(Time - Shells[i].startTime) * SHELLSPEED * cos(Shells[i].angle * PI / 180),
+					(Time - Shells[i].startTime) * SHELLSPEED * sin(Shells[i].angle * PI / 180.0),
+						(Time - Shells[i].startTime) * SHELLSPEED * cos(Shells[i].angle * PI / 180.0),
 						-1,
 						0,
 						&tmpi,
@@ -3383,84 +3363,71 @@ void Display()
 					)
 					)
 				{
-					CrateIndex++;	// randomly generate crates
-					if (CrateIndex > CRATECAP)
-						CrateIndex = 0;
-					int wallState = rand() % 8;
-					myMap.isCrate[tmpi][tmpj] = true;
-					switch (wallState)
+					if (myMap.MCM[tmpi][tmpj] && myMap.isSolid[tmpi][tmpj] && myMap.color[tmpi][tmpj][0] != 7)
 					{
-					case 0:
-					case 1:
-					case 2:
-						Crates[CrateIndex].type = AMMOCRATE;
-						Crates[CrateIndex].X = myMap.coord[tmpi][tmpj][0];
-						Crates[CrateIndex].Y = myMap.coord[tmpi][tmpj][1];
-						Crates[CrateIndex].isActive = true;
-						break;
-					case 3:
-						Crates[CrateIndex].type = SMOKECRATE;
-						Crates[CrateIndex].X = myMap.coord[tmpi][tmpj][0];
-						Crates[CrateIndex].Y = myMap.coord[tmpi][tmpj][1];
-						Crates[CrateIndex].isActive = true;
-						break;
-					case 4:
-						Crates[CrateIndex].type = HPCRATE;
-						Crates[CrateIndex].X = myMap.coord[tmpi][tmpj][0];
-						Crates[CrateIndex].Y = myMap.coord[tmpi][tmpj][1];
-						Crates[CrateIndex].isActive = true;
-						break;
-					case 5:
-						Crates[CrateIndex].type = MINECRATE;// RELOADCRATE;
-						Crates[CrateIndex].X = myMap.coord[tmpi][tmpj][0];
-						Crates[CrateIndex].Y = myMap.coord[tmpi][tmpj][1];
-						Crates[CrateIndex].isActive = true;
-						break;
+						CrateIndex++;	// randomly generate crates
+						if (CrateIndex > CRATECAP)
+							CrateIndex = 0;
+						int wallState = rand() % 8;
+						myMap.isCrate[tmpi][tmpj] = true;
+						switch (wallState)
+						{
+						case 0:
+						case 1:
+						case 2:
+							Crates[CrateIndex].type = AMMOCRATE;
+							Crates[CrateIndex].X = myMap.coord[tmpi][tmpj][0];
+							Crates[CrateIndex].Y = myMap.coord[tmpi][tmpj][1];
+							Crates[CrateIndex].isActive = true;
+							break;
+						case 3:
+							Crates[CrateIndex].type = SMOKECRATE;
+							Crates[CrateIndex].X = myMap.coord[tmpi][tmpj][0];
+							Crates[CrateIndex].Y = myMap.coord[tmpi][tmpj][1];
+							Crates[CrateIndex].isActive = true;
+							break;
+						case 4:
+							Crates[CrateIndex].type = HPCRATE;
+							Crates[CrateIndex].X = myMap.coord[tmpi][tmpj][0];
+							Crates[CrateIndex].Y = myMap.coord[tmpi][tmpj][1];
+							Crates[CrateIndex].isActive = true;
+							break;
+						case 5:
+							Crates[CrateIndex].type = MINECRATE;// RELOADCRATE;
+							Crates[CrateIndex].X = myMap.coord[tmpi][tmpj][0];
+							Crates[CrateIndex].Y = myMap.coord[tmpi][tmpj][1];
+							Crates[CrateIndex].isActive = true;
+							break;
+						}
+						for (int i = 0; i < 50; i++)
+						{
+							if (smokeIndex >= 1000)
+								smokeIndex = 0;
+							smokeIDBuffer[smokeIndex] = Time;
+							smokeCoordBuffer[smokeIndex][0] = myMap.coord[tmpi][tmpj][0];
+							smokeCoordBuffer[smokeIndex][1] = myMap.coord[tmpi][tmpj][1];
+							smokeAngleBuffer[smokeIndex] = rand() % 360;
+							smokeDurBuffer[smokeIndex] = 0.02;
+							smokeIDBufferSet[smokeIndex] = !smokeIDBufferSet[smokeIndex];
+							smokeActive[smokeIndex] = true;
+							smokeIndex++;
+						}
+						destructionTimeBuffer[tmpi][tmpj] = Time;
+						Shells[i].active = false;
 					}
-					for (int i = 0; i < 50; i++)
-					{
-						if (smokeIndex >= 1000)
-							smokeIndex = 0;
-						smokeIDBuffer[smokeIndex] = Time;
-						smokeCoordBuffer[smokeIndex][0] = myMap.coord[tmpi][tmpj][0];
-						smokeCoordBuffer[smokeIndex][1] = myMap.coord[tmpi][tmpj][1];
-						smokeAngleBuffer[smokeIndex] = rand() % 360;
-						smokeDurBuffer[smokeIndex] = 0.02;
-						smokeIDBufferSet[smokeIndex] = !smokeIDBufferSet[smokeIndex];
-						smokeActive[smokeIndex] = true;
-						smokeIndex++;
-					}
-					destructionTimeBuffer[tmpi][tmpj] = Time;
-					Shells[i].active = false;
 				}
 			}
 		}
 		glDisableVertexAttribArray(0);
 	}
 
-	if (DepthFightingOn != 0)
-	{
-		glPushMatrix();
-		glRotatef(90., 0., 1., 0.);
-		glCallList(BoxList);
-		glPopMatrix();
-	}
-
+	//if (DepthFightingOn != 0)
 
 	// draw some gratuitous text that just rotates on top of the scene:
 
 	glDisable(GL_DEPTH_TEST);
 	if (isInMenu)
 	{
-		if (loading)
-		{
-			glColor3f(1, 0 - sin(Time * 1000), 0 - sin(Time * 1000));
-			DoRasterString(0, 10, 0, (char *)"Loading");
-		}
-		// select level:
-
-		// level list
-
 		glDisable(GL_DEPTH_TEST);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
@@ -3476,20 +3443,24 @@ void Display()
 		float amount = 40;
 		selectIndex = selectIndex % 10;
 		glColor3f(0.125,0.125,0.125);
-		DoStringBox(60, y, 0, (char *)"Please select the map:");
-		DoStringBox(60, y - 2, 0, (char *)"Please select the map:");
-		DoStringBox(60, y - 4, 0, (char *)"Please select the map:");
-		DoStringBox(60, y - 6, 0, (char *)"Please select the map:");
-		DoStringBox(60, y - 8, 0, (char *)"Please select the map:");
-		DoStringBox(60, y - 10, 0, (char *)"Please select the map:");
-		DoStringBox(60, y - 12, 0, (char *)"Please select the map:");
-		DoStringBox(60, y - 14, 0, (char *)"Please select the map:");
-		DoStringBox(60, y - 16, 0, (char *)"Please select the map:");
-		DoStringBox(60, y - 18, 0, (char *)"Please select the map:");
-		DoStringBox(60, y - 20, 0, (char *)"Please select the map:");
+		DoStringBox(60, y, 0, (char *)"Please select the map: LOCAL");
+		DoStringBox(60, y - 2, 0, (char *)"Please select the map: LOCAL");
+		DoStringBox(60, y - 4, 0, (char *)"Please select the map: LOCAL");
+		DoStringBox(60, y - 6, 0, (char *)"Please select the map: LOCAL");
+		DoStringBox(60, y - 8, 0, (char *)"Please select the map: LOCAL");
+		DoStringBox(60, y - 10, 0, (char *)"Please select the map: LOCAL");
+		DoStringBox(60, y - 12, 0, (char *)"Please select the map: LOCAL");
+		DoStringBox(60, y - 14, 0, (char *)"Please select the map: LOCAL");
+		DoStringBox(60, y - 16, 0, (char *)"Please select the map: LOCAL");
+		DoStringBox(60, y - 18, 0, (char *)"Please select the map: LOCAL");
+		DoStringBox(60, y - 20, 0, (char *)"Please select the map: LOCAL");
 		glColor3f(1., 1., 1.);
 		DoRasterString(60, y, 0, (char *)"Please select the map:");
-
+		/*glColor3f(1., 1., 0);
+		if(isLocal)
+			DoRasterString(70, y - 2 * (selectIndex + 1), 0, (char *)"<-Local->");
+		else
+			DoRasterString(70, y - 2 * (selectIndex + 1), 0, (char *)"<-LAN->");*/
 		switch (backgroundRand)
 		{
 		case 0:
@@ -3771,23 +3742,19 @@ void Display()
 			DoRasterString(MAPEDGEX + 22, 3, MAPEDGEY - 15, (char *)"OUT OF SMOKE!");
 		}
 
-		itoa(AbramScore, scoreText, 16);
+		itoa(AbramScore, scoreText, 10);
 		if(ScoreSet)
 			glColor3f(1 - sin(Time * 1000), 1 - sin(Time * 1000), 0);
 		else
 			glColor3f(1, 1, 0);
 		DoRasterString(MAPEDGEX + 22, 3, -MAPEDGEY-10, (char *)scoreText);
-		itoa(IS3Score, scoreText, 16);
+		itoa(IS3Score, scoreText, 10);
 		if (ScoreSet)
 			glColor3f(0, 0, 1 - sin(Time * 1000));
 		else
 			glColor3f(0, 0, 1);
 		DoRasterString(MAPEDGEX + 22, 3, MAPEDGEY + 10, (char *)scoreText);
-		if (loading)
-		{
-			glColor3f(1, 0 - sin(Time * 1000), 0 - sin(Time * 1000));
-			DoRasterString(0, 10, 0, (char *)"Loading");
-		}
+		
 		// draw some gratuitous text that is fixed on the screen:
 		//
 		// the projection matrix is reset to define a scene whose
@@ -3908,6 +3875,7 @@ void DoMainMenu(int id)
 		// gracefully close out the graphics:
 		// gracefully close the graphics window:
 		// gracefully exit the program:
+		glfwTerminate();
 		glutSetWindow(MainWindow);
 		glFinish();
 		glutDestroyWindow(MainWindow);
@@ -4034,7 +4002,6 @@ void InitGraphics()
 {
 	// request the display modes:
 	// ask for red-green-blue-alpha color, double-buffering, and z-buffering:
-
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
 
 	// set the initial window configuration:
@@ -4174,6 +4141,11 @@ void InitGraphics()
 	//load graphics
 	loadAll();
 	loadMap();
+	if (!glfwInit())
+	{
+		fprintf(stderr, "GLFW failed!\n");
+		DoMainMenu(QUIT);
+	}
 }
 void InitializeVertexBuffer(GLuint &theBuffer, GLenum target, GLenum usage, const void* data, int size)
 {
@@ -4199,6 +4171,9 @@ static void list_audio_devices(const ALCchar *devices)
 }
 void InitLists()
 {
+	// List here
+
+	// Setup the sound
 	float dx = BOXSIZE / 2.f;
 	float dy = BOXSIZE / 2.f;
 	float dz = BOXSIZE / 2.f;
@@ -4519,8 +4494,37 @@ void InitLists()
 	BoxList = glGenLists(1);
 	glNewList(BoxList, GL_COMPILE);
 	// Random Objects placed here (polyStack)
+
+
+	//Grass
+	float startx = MAPEDGEX + CUBESIZE;
+	float startz = MAPEDGEY + CUBESIZE;
+	float endx = (-MAPEDGEX - CUBESIZE);
+	float endz = (-MAPEDGEY - CUBESIZE);
+	float lengthx = startx - endx;
+	float lengthz = startz - endz;
+	int grainX = GRASSGRAINX;
+	int grainY = GRASSGRAINY;
+	glBegin(GL_QUADS);
+	glPushMatrix();
+	glColor3f(0.1, 0.1, 0.0);
+	for (int i = 0; i < grainX; i++)
+	{
+		for (int j = 0; j < grainY; j++)
+		{
+			glVertex3f(startx - i*(lengthx) / grainX, MENUYOFFSET, startz - j*(lengthz) / grainY);
+			glVertex3f(startx - i*(lengthx) / grainX, MENUYOFFSET, startz - (j + 1)*(lengthz) / grainY);
+			glVertex3f(startx - (i + 1)*(lengthx) / grainX, MENUYOFFSET, startz - (j + 1)*(lengthz) / grainY);
+			glVertex3f(startx - (i + 1)*(lengthx) / grainX, MENUYOFFSET, startz - j*(lengthz) / grainY);
+		}
+	}
+	glPopMatrix();
+	glEnd();
+
 	glEndList();
 
+	// Generate the textures
+	
 
 	// create the axes:
 
@@ -4561,6 +4565,12 @@ void Keyboard(unsigned char c, int x, int y)
 		case 'S':
 			selectIndex++;
 			selectIndex = selectIndex % 10;
+			break;
+		case 'a':
+		case 'A':
+		case 'd':
+		case 'D':
+			isLocal = !isLocal;
 			break;
 		case ' ':
 		case 13:
@@ -4679,12 +4689,104 @@ void keySpecial(int key, int x, int y) {
 			selectIndex++;
 			selectIndex = selectIndex % 10;
 			break;
+		case GLUT_KEY_LEFT:
+		case GLUT_KEY_RIGHT:
+			isLocal = !isLocal;
+			break;
 		}
 }
 void keyUp(unsigned char c, int x, int y)
 {
 	keyBuffer[c] = false;
 
+}
+void gamepad() {
+	if (glfwJoystickPresent(GLFW_JOYSTICK_1))
+	{
+		int axesCount = 0;
+		int buttonCount = 0;
+		const float *axes = glfwGetJoystickAxes(GLFW_JOYSTICK_1, &axesCount);
+		const unsigned char *button = glfwGetJoystickButtons(GLFW_JOYSTICK_1,&buttonCount);
+
+		if(GLFW_PRESS == button[1] || GLFW_PRESS == button[2])
+			keyBuffer['f'] = true;
+		else
+			keyBuffer['f'] = false;
+
+		if (GLFW_PRESS == button[3])
+			keyBuffer['w'] = true;
+		else
+			keyBuffer['w'] = false;
+
+		if (GLFW_PRESS == button[0])
+			keyBuffer['s'] = true;
+		else
+			keyBuffer['s'] = false;
+
+		if (GLFW_PRESS == button[5])
+			keyBuffer['e'] = true;
+		else
+			keyBuffer['e'] = false;
+
+		if (GLFW_PRESS == button[4])
+			keyBuffer['q'] = true;
+		else
+			keyBuffer['q'] = false;
+
+		if (GLFW_PRESS == button[17])
+			keyBuffer['d'] = true;
+		else
+			keyBuffer['d'] = false;
+
+
+		if (GLFW_PRESS == button[19])
+			keyBuffer['a'] = true;
+		else
+			keyBuffer['a'] = false;
+
+	}
+	if (glfwJoystickPresent(GLFW_JOYSTICK_2))
+	{
+		int axesCount = 0;
+		int buttonCount = 0;
+		const float *axes = glfwGetJoystickAxes(GLFW_JOYSTICK_2, &axesCount);
+		const unsigned char *button = glfwGetJoystickButtons(GLFW_JOYSTICK_2, &buttonCount);
+
+		if (GLFW_PRESS == button[1] || GLFW_PRESS == button[2])
+			keyBuffer['h'] = true;
+		else
+			keyBuffer['h'] = false;
+
+		if (GLFW_PRESS == button[3])
+			keyBuffer['i'] = true;
+		else
+			keyBuffer['i'] = false;
+
+		if (GLFW_PRESS == button[0])
+			keyBuffer['k'] = true;
+		else
+			keyBuffer['k'] = false;
+
+		if (GLFW_PRESS == button[5])
+			keyBuffer['o'] = true;
+		else
+			keyBuffer['o'] = false;
+
+		if (GLFW_PRESS == button[4])
+			keyBuffer['u'] = true;
+		else
+			keyBuffer['u'] = false;
+
+		if (GLFW_PRESS == button[17])
+			keyBuffer['l'] = true;
+		else
+			keyBuffer['l'] = false;
+
+		if (GLFW_PRESS == button[19])
+			keyBuffer['j'] = true;
+		else
+			keyBuffer['j'] = false;
+	}
 }
 void MouseButton(int button, int state, int x, int y)
 {

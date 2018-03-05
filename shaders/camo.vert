@@ -1,7 +1,7 @@
 #version 130
 uniform float uX,uY,uZ;
 
-out vec2 vST; // texture coords
+//out vec2 vST; // texture coords
 out vec3 vN; // normal vector
 out vec3 vL; // vector from point to light
 out vec3 vE; // vector from point to eye
@@ -11,7 +11,7 @@ out vec4 vColor;
 void
 main( )
 {
-	vST = gl_MultiTexCoord0.st;
+//	vST = gl_MultiTexCoord0.st;
 	vec3 LIGHTPOSITION = vec3( uX, uY, uZ );
 	vec4 ECposition = gl_ModelViewMatrix * gl_Vertex;
 	vN = normalize( gl_NormalMatrix * gl_Normal ); // normal vector

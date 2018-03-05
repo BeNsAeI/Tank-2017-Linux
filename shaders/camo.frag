@@ -1,18 +1,28 @@
 #version 130
 uniform float uKa, uKd,uAd,uBd, uTol,uNoiseFreq,uNoiseAmp,uAlpha,uTime; // coefficients of each type of lighting
 uniform float uShininess; // specular exponent
-uniform sampler3D Noise3;
+uniform sampler2D Noise2;
 
-in vec2 vST; // texture cords
+//in vec2 vST; // texture cords
 in vec3 vN; // normal vector
 in vec3 vL; // vector from point to light
 in vec4 vColor;
 in vec3 vMCposition;
 
+vec2 SineWave( vec2 p )
+{
+    float pi = 3.14159;
+    float A = 0.15;
+    float w = 10.0 * pi;
+    float t = 30.0*pi/180.0;
+    float y = sin( w*p.x + t) * A; 
+    return vec2(p.x, p.y+y);
+}
+
 void
 main( )
 {
-	vec3 camoColor = vec3(vColor.r/8,vColor.g/4,vColor.b/4);
+	vec3 camoColor = vec3(vColor.r/4,vColor.g/2,vColor.b/2);
 	//vec3 camoColor = vec3(0,0,0);
 	vec3 baseColor = vec3(vColor.r*3/4,vColor.g*3/2,vColor.b*3/2);
 	//vec3 baseColor = vec3(1,0,0);
@@ -21,19 +31,19 @@ main( )
 	
 	float Ar = uAd/2.;
 	float Br = uBd/2.;
-	int numins = int( vST.s / uAd );
-	int numint = int( vST.t / uBd );
+	int numins = int( vMCposition.x*vMCposition.y/40/*vST.s*/ / uAd );
+	int numint = int( (vMCposition.z-2.5)*vMCposition.y/40/*vST.t*/ / uBd );
 	float u_c = numins *uAd + Ar ;
 	float v_c = numint *uBd + Br ;
 	
-	vec4 nv = texture3D( Noise3, uNoiseFreq*vMCposition );
+	vec4 nv = texture2D( Noise2, uNoiseFreq*vMCposition.xy );
 	float n = nv.r + nv.g + nv.b + nv.a;    //  1. -> 3.
 	n = n - 2.;
 	
 	float sc = float(numins) * uAd  +  Ar;
-	float ds = vST.s - sc;                   // wrt ellipse center
+	float ds = vMCposition.x*vMCposition.y/40/*vST.s*/ - sc;                   // wrt ellipse center
 	float tc = float(numint) * uBd  +  Br;
-	float dt = vST.t - tc;                   // wrt ellipse center
+	float dt = (vMCposition.z-2.5)*vMCposition.y/40/*vST.t*/ - tc;                   // wrt ellipse center
 
 	float oldDist = sqrt( ds*ds + dt*dt );
 	float newDist = oldDist + uNoiseAmp*n;
@@ -47,14 +57,13 @@ main( )
 
 	float dist = ds*ds + dt*dt;
 	float a=1.;
-	float rand = vST.s*abs(sin(1000*uTime*1))*fract(sin(dot(vec2(vST.t*abs(sin(1000*uTime*1)),vST.s*abs(sin(1000*uTime*1))),vec2(12.9898,78.233)))*43758.5453);
-	if(dist < 1 - uTol * 2 * rand)
+	/*if(dist < 1 - uTol * 2 * uTime)
 	{
 		if (uAlpha==0)
 			discard;
 		else
 			a=uAlpha;
-	}
+	}*/
 	if(dist < 1 - uTol)
 	{
 		myColor=camoColor;
