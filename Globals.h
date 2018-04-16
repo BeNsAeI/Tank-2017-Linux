@@ -1,5 +1,6 @@
 #ifndef GLOBALS_H
 	#define GLOBALS_H
+
 	ALCdevice *device;
 	ALboolean enumeration;
 	ALCcontext *context;
@@ -45,29 +46,6 @@
 	const int LEFT = { 4 };
 	const int MIDDLE = { 2 };
 	const int RIGHT = { 1 };
-	enum Projections
-	{
-		ORTHO,
-		PERSP
-	};
-	enum ButtonVals
-	{
-		RESET,
-		QUIT
-	};
-	const GLfloat BACKCOLOR[] = { 0., 0., 0., 1. };
-	const GLfloat AXES_WIDTH = { 3. };
-	enum Colors
-	{
-		RED,
-		YELLOW,
-		GREEN,
-		CYAN,
-		BLUE,
-		MAGENTA,
-		WHITE,
-		BLACK
-	};
 	char * ColorNames[] = {
 		(char *)"Red",
 		(char *)"Yellow",
@@ -78,6 +56,8 @@
 		(char *)"White",
 		(char *)"Black"
 	};
+	const GLfloat BACKCOLOR[] = { 0., 0., 0., 1. };
+	const GLfloat AXES_WIDTH = { 3. };
 	const GLfloat Colors[][3] = {
 		{ 1., 0., 0. },		// red
 		{ 1., 1., 0. },		// yellow
@@ -134,6 +114,9 @@
 	GLuint VertexVBOID = 0;
 	GLuint ModelIDList[NUMMODEL];
 	int Abram[2][2];
+	int T29[2][2];
+	int E100[2][2];
+	int Type59[2][2];
 	int IS3[3][2];
 	int Track[2][2];
 	int cube[2];
@@ -223,24 +206,11 @@
 	bool keyBuffer[256];
 	char MapRaw[25 * 14];
 
-	struct Shell {
-		float x;
-		float y;
-		float angle;
-		float startTime;
-		int shooterId;
-		bool active;
-	};
 	struct Map myMap;
+	Crate Crates[10];
+
 	struct Shell Shells[SHELLMAX];
-	struct Crate {
-		int type;
-		float X;
-		float Y;
-		int i;
-		int j;
-		bool isActive;
-	};
+
 	// AI knowledge Base
 	struct AIKB {
 		bool isAI = false;
@@ -256,29 +226,32 @@
 		float * AIHullAngle = NULL;
 		float * AITurretAngle = NULL;
 		SimpleAI * agent = new SimpleAI(&myMap);
+
 	};
 	struct AIKB myAIKB;
-	Crate Crates[10];
 	int CrateIndex = 0;
 	int shellSize = 0;
 	void	Animate();
 	void	Display();
-	void	DoAxesMenu(int);
-	void	DoColorMenu(int);
-	void	DoDepthBufferMenu(int);
-	void	DoDepthFightingMenu(int);
-	void	DoDepthMenu(int);
-	void	DoCameraMenu(int);
-	void	DoDebugMenu(int);
-	void	DoMainMenu(int);
-	void	DoProjectMenu(int);
+//	void	DoAxesMenu(int);
+//	void	DoColorMenu(int);
+//	void	DoDepthBufferMenu(int);
+//	void	DoDepthFightingMenu(int);
+//	void	DoDepthMenu(int);
+//	void	DoCameraMenu(int);
+//	void	DoDebugMenu(int);
+//	void	DoMainMenu(int);
+//	void	DoProjectMenu(int);
+	void	Quit();
 	void	DoRasterString(float, float, float, char *);
 	void	DoStringBox   (float, float, float, char *);
-	void	DoStrokeString(float, float, float, float, char *);
+	void	DoStringBoxColor(float, float, float, char *, float, float, float);
+	void	DoStringBoxColor(float, float, float, char *);
+//	void	DoStrokeString(float, float, float, float, char *);
 	float	ElapsedSeconds();
 	void	InitGraphics();
 	void	InitLists();
-	void	InitMenus();
+	//void	InitMenus();
 	//void	keySpecial(int key, int x, int y);
 	void	Keyboard(unsigned char, int, int);
 	void	keySpecial(int key, int x, int y);
@@ -322,10 +295,19 @@
 		1, 2, 3, 4, -5, 6
 	};
 
-	bool isLocal = true;
+	bool isSingle = false;
 
+	int PlayerOne = 0;
+	int PlayerTwo = 1;
 
+	void(*DrawPointer1)(float X, float Y, float Z, float hullAngle, float turretAngle);
+	void(*DrawPointer2)(float X, float Y, float Z, float hullAngle, float turretAngle);
+	void(*DrawPointer1d)(float X, float Y, float Z, float hullAngle, float turretAngle);
+	void(*DrawPointer2d)(float X, float Y, float Z, float hullAngle, float turretAngle);
 
+	int menuState = 0;
+	int userGrassMultiplier = 10;
+	bool isSoundLoaded = false;
 	//OS Compatibility
 #ifndef WIN32
 	char * itoa(int i, char * buffer, int radix)

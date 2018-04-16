@@ -27,11 +27,23 @@ const int GLUIFALSE = { false };
 #define TREESCALE 35
 #define ROCKSCALE 10
 #define SHELLSCALE 0.045
+#define RELOADTIME 0.015
+#ifdef WIN32
+#define SHELLSPEED 50000
+#define GRASSGRAINX 32
+#define GRASSGRAINY 28
+#define MENUMULTIPLIER 2
+#endif
+#ifndef WIN32
 #define SHELLSPEED 40000
+#define GRASSGRAINX 4
+#define GRASSGRAINY 7
+#define MENUMULTIPLIER 6
+#endif
 #define ROCKTHRESH 25
 #define REFLECT -1
 #define SMOKECOUNT 3
-#define TANKHP 3
+#define TANKHP 4
 #define BRICKHP 1
 #define FRONTARMOR 0.75
 #define SIDEARMOR 0.5
@@ -43,7 +55,6 @@ const int GLUIFALSE = { false };
 #define SHELLSTORAGE 10
 #define BOUNCETHRESH 0.1
 #define CRATECAP 9
-#define RELOADTIME 0.015
 #define AMMOCRATE 0;
 #define SMOKECRATE 1;
 #define HPCRATE 2;
@@ -61,14 +72,21 @@ const int GLUIFALSE = { false };
 #define _USE_MATH_DEFINES
 #define PLANSIZE 3
 #define AIMTHRESH 1
-#define AIENGAGE 30
-#define GRASSGRAINX 32
-#define GRASSGRAINY 28
-#define MENUMULTIPLIER 4
+#define AIENGAGE 45
 #define MENUXOFFSET 5
 #define MENUZOFFSET 0
 #define MENUYOFFSET -0.6
 #define BUSHSCALE 2
 #define GLFW_JOYSTICK_1   0
 #define GLFW_JOYSTICK_2   1
+#define TOTALTANKS 5;
+#define AIACTIVE true
+#define IDLE 0
+#define ATTACK 1
+#define DEFEND 2
+#define RUN 3
+#define AQUIRE 4
+#define ELIMINATECRATE 5
+#define SC 0.25
+#define ADVANCEMENU true
 #endif

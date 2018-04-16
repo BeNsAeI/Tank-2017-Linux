@@ -1,5 +1,5 @@
 #version 130
-uniform float uKa, uKd,uAd,uBd, uTol,uNoiseFreq,uNoiseAmp,uAlpha,uTime; // coefficients of each type of lighting
+uniform float uTol; // coefficients of each type of lighting
 uniform float uShininess; // specular exponent
 uniform sampler2D Noise2;
 
@@ -9,19 +9,13 @@ in vec3 vL; // vector from point to light
 in vec4 vColor;
 in vec3 vMCposition;
 
-vec2 SineWave( vec2 p )
-{
-    float pi = 3.14159;
-    float A = 0.15;
-    float w = 10.0 * pi;
-    float t = 30.0*pi/180.0;
-    float y = sin( w*p.x + t) * A; 
-    return vec2(p.x, p.y+y);
-}
-
 void
 main( )
 {
+	float uAd = 0.25;
+	float uBd = 0.75;
+	float uNoiseAmp = 0.75;
+	float uNoiseFreq = 0.15;
 	vec3 camoColor = vec3(vColor.r/4,vColor.g/2,vColor.b/2);
 	//vec3 camoColor = vec3(0,0,0);
 	vec3 baseColor = vec3(vColor.r*3/4,vColor.g*3/2,vColor.b*3/2);
@@ -57,13 +51,7 @@ main( )
 
 	float dist = ds*ds + dt*dt;
 	float a=1.;
-	/*if(dist < 1 - uTol * 2 * uTime)
-	{
-		if (uAlpha==0)
-			discard;
-		else
-			a=uAlpha;
-	}*/
+
 	if(dist < 1 - uTol)
 	{
 		myColor=camoColor;
@@ -75,9 +63,9 @@ main( )
 	}
 	
 	vec3 Light = normalize(vL);
-	vec3 ambient = uKa * myColor;
+	vec3 ambient = myColor;
 	float d = max( dot(vN,Light), 0. ); // only do diffuse if the light can see the point
-	vec3 diffuse = uKd * d * myColor;
+	vec3 diffuse = d * myColor;
 	vec3 shaded = ambient + diffuse;
 	
 	

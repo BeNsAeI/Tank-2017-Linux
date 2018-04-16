@@ -1,3 +1,25 @@
 
-0:17(2): error: syntax error, unexpected IDENTIFIER, expecting ',' or ';'
+0:8(48): warning: `color' used uninitialized
+0:8(48): error: cannot access field `r' of non-structure / non-vector
+0:8(48): error: type mismatch
+0:8(48): error: operands to arithmetic operators must be numeric
+0:8(43): error: cannot construct `vec2' from a non-numeric data type
+0:8(39): error: no matching function for call to `dot(error, vec2)'; candidates are:
+0:8(39): error:    float dot(float, float)
+0:8(39): error:    float dot(vec2, vec2)
+0:8(39): error:    float dot(vec3, vec3)
+0:8(39): error:    float dot(vec4, vec4)
+0:8(35): error: no matching function for call to `sin(error)'; candidates are:
+0:8(35): error:    float sin(float)
+0:8(35): error:    vec2 sin(vec2)
+0:8(35): error:    vec3 sin(vec3)
+0:8(35): error:    vec4 sin(vec4)
+0:8(35): error: operands to arithmetic operators must be numeric
+0:8(29): error: no matching function for call to `fract(error)'; candidates are:
+0:8(29): error:    float fract(float)
+0:8(29): error:    vec2 fract(vec2)
+0:8(29): error:    vec3 fract(vec3)
+0:8(29): error:    vec4 fract(vec4)
+0:8(23): error: operands to arithmetic operators must be numeric
+0:8(10): error: operands to arithmetic operators must be numeric
 

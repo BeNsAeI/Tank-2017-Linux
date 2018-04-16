@@ -4,12 +4,14 @@
 #include <iostream>
 #include"const.h"
 #include "Map.h"
+#include "struct.h"
 class SimpleAI {
 public:
 	SimpleAI();
 	SimpleAI(struct Map * map);
 	float huristic();
-	void getMove(char AIID,bool * keyBuffer);
+	void pathFind(char AIID,bool*keyBuffer, Crate * Crates);
+	void getMove(char AIID,bool * keyBuffer, Crate * Crates);
 	struct InnerAIKB {
 		bool isAI = false;
 		char AIID = NULL;
@@ -32,6 +34,9 @@ private:
 	struct Map * myMap;
 	float targetPos[2];
 	float wayPoint[2];
+	float tempWayPoint[2];
+	bool wayPointSet;
+	bool pickUp;
 };
 
 #endif
