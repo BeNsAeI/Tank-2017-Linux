@@ -21,6 +21,8 @@ const int GLUIFALSE = { false };
 #define OUTLINE 4.0f
 #define MAPEDGEX 40
 #define MAPEDGEY 70
+#define MUX 24
+#define MUY 14
 #define BODY 4.75
 #define CUBESIZE 6.0
 #define SPAWN 45

@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <string>
 #include <cstring>
-
 #include <glm/glm.hpp>
 
 #include "loader.h"
@@ -92,6 +91,7 @@ bool loadOBJ(
 	}
 
 	// For each vertex of each triangle
+
 	for (unsigned int i = 0; i<vertexIndices.size(); i++) {
 
 		// Get the indices of its attributes
