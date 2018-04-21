@@ -127,15 +127,28 @@
 	int hpCrate[2][2];
 	int mineCrate[2];
 	int grass[2];
-	float smokeBeginTime = 0;
-	bool smokeSet = false;
+	//float smokeBeginTime = 0;
+	//bool smokeSet = false;
+	/*
 	float smokeIDBuffer[1000];
 	float smokeCoordBuffer[1000][2];
 	float smokeDurBuffer[1000];
 	float smokeAngleBuffer[1000];
 	bool  smokeIDBufferSet[1000];
 	bool  smokeActive[1000];
-	int smokeIndex = 0;
+	int smokeIndex = 0;*/
+	
+	struct Smoke {
+		float smokeIDBuffer;
+		float smokeCoordBuffer[2];
+		float smokeDurBuffer;
+		float smokeAngleBuffer;
+		bool  smokeIDBufferSet = false;
+		bool  smokeActive = false;
+	};
+	std::vector<Smoke>Smokes;
+	int AbramSmokeBudget = 0;
+	int IS3SmokeBudget = 0;
 	float destructionTimeBuffer[24][14];
 
 	float TANKSPEED = 0.3;
@@ -207,7 +220,8 @@
 	char MapRaw[25 * 14];
 
 	struct Map myMap;
-	Crate Crates[10];
+	//Crate Crates[10];
+	std::vector<Crate>Crates;
 
 	struct Shell Shells[SHELLMAX];
 

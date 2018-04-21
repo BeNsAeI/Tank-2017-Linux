@@ -1,0 +1,4 @@
+
+0(35) : error C0000: syntax error, unexpected '/', expecting "::" at token "/"
+0(84) : warning C7533: global variable gl_FragColor is deprecated after version 120
+

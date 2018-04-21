@@ -1,0 +1,3 @@
+Grass=10
+Speed=30
+Speed=500

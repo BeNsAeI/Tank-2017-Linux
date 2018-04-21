@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
 	backgroundRand = rand() % 9;
 	backgroundRand = (backgroundRand + rand()) % 9;
 	mapName = "M";
-	
+
 	glutInit(&argc, argv);
 
 	//initiate draw function
@@ -162,7 +162,7 @@ void Animate()
 	{
 		std::cout << "Time restarted" <<std::endl;
 		shakeStartTime = 0;
-		smokeBeginTime = 0;
+		//smokeBeginTime = 0;
 		AbramLastShot = 0;
 		IS3LastShot = 0;
 	}
@@ -177,11 +177,14 @@ void loadMap()
 	Reset();
 	for (int i = 0; i < 8; i++)
 		alSourceStop(Sources[i]);
-	for (int i = 0; i < CRATECAP; i++)
+
+	for (std::vector<Crate>::iterator it = Crates.begin(); it != Crates.end(); ++it)
 	{
-		Crates[i].isActive = false;
-		myMap.isCrate[Crates[i].i][Crates[i].j] = false;
+		it->isActive = false;
+		myMap.isCrate[it->i][it->j] = false;
 	}
+	while (!Crates.empty())
+		Crates.pop_back();
 	
 	for (int j = 0; j < 14; j++)
 	{
@@ -398,10 +401,8 @@ void loadMap()
 		std::cout << std::endl;
 	}
 	std::cout << std::endl;
-	for (int i = 0; i < 1000; i++)
-	{
-		smokeIDBufferSet[i] = false;
-	}
+
+	Smokes.erase(Smokes.begin(), Smokes.end());
 	ScoreSet = false;
 	musicID = (musicID + rand()) % 14;
 	switch (musicID)
@@ -781,7 +782,7 @@ void resetState(std::string newMap) {
 	AbramHP = TANKHP;
 	IS3HP = TANKHP;
 	shake = false;
-	smokeIndex = 0;
+	//smokeIndex = 0;
 	shakeOnce = false;
 	AbramShells = SHELLSTORAGE;
 	IS3Shells = SHELLSTORAGE;
@@ -791,10 +792,25 @@ void resetState(std::string newMap) {
 	IS3TurretAngle = 0;
 	AbramLastShot = 0;
 	IS3LastShot = 0;
-	for (int i = 0; i < 1000; i++)
-		smokeIDBuffer[i] = 0;
+	Smokes.erase(Smokes.begin(), Smokes.end());
 	mapName = newMap;
 	loadMap();
+}
+void resetState() {
+	AbramHP = TANKHP;
+	IS3HP = TANKHP;
+	shake = false;
+	//smokeIndex = 0;
+	shakeOnce = false;
+	AbramShells = SHELLSTORAGE;
+	IS3Shells = SHELLSTORAGE;
+	AbramSmoke = SMOKECOUNT;
+	IS3Smoke = SMOKECOUNT;
+	AbramTurretAngle = 0;
+	IS3TurretAngle = 0;
+	AbramLastShot = 0;
+	IS3LastShot = 0;
+	Smokes.erase(Smokes.begin(), Smokes.end());
 }
 float White[4] = { 1,1,1,1 };
 float *Array3(float a, float b, float c)
@@ -844,6 +860,7 @@ bool MapCollisionModel(float AX, float AY, float Xstride, float Ystride, int sig
 	switch (axis)
 	{
 	case 0:
+
 		for (int j = 0; j < 14; j++)
 		{
 			for (int i = 0; i < 24; i++)
@@ -927,20 +944,20 @@ bool MapCollisionModel(float AX, float AY, float Xstride, float Ystride, int sig
 		break;
 	}
 }
-int CrateCollisionModel(float AX, float AY, float Xstride, float Ystride, int sign)
+std::vector<Crate>::iterator CrateCollisionModel(float AX, float AY, float Xstride, float Ystride, int sign)
 {
-	for (int i = 0; i < CRATECAP; i++)
+	for (std::vector<Crate>::iterator it = Crates.begin(); it != Crates.end(); ++it)
 	{
-		if (Crates[i].isActive)
+		if (it->isActive)
 		{
-			if ((((AX + (Xstride * sign) < Crates[i].X + BODY) && (AX + (Xstride * sign) > Crates[i].X - BODY)) &&
-				((AY + (Ystride * sign) <Crates[i].Y + BODY) && (AY + (Ystride * sign) > Crates[i].Y - BODY))))
+			if ((((AX + (Xstride * sign) < it->X + BODY) && (AX + (Xstride * sign) > it->X - BODY)) &&
+				((AY + (Ystride * sign) <it->Y + BODY) && (AY + (Ystride * sign) > it->Y - BODY))))
 			{
-				return i;
+				return it;
 			}
 		}
 	}
-	return CRATECAP;
+	return Crates.end();
 }
 void makeAI(bool isActive, char Tank)
 {
@@ -1045,24 +1062,31 @@ void KeyHandler() {
 			}
 
 		}
-		if (smokeIndex >= 1000)
-			smokeIndex = 0;
-		smokeIDBuffer[smokeIndex] = Time;
-		smokeCoordBuffer[smokeIndex][0] = AbramXY[0];
-		smokeCoordBuffer[smokeIndex][1] = AbramXY[1];
-		smokeDurBuffer[smokeIndex] = 0.01;
-		smokeAngleBuffer[smokeIndex] = rand() % 360;
-		smokeIDBufferSet[smokeIndex] = !smokeIDBufferSet[smokeIndex];
-		smokeActive[smokeIndex] = true;
-		smokeIndex++;
-		int cratecheck = CrateCollisionModel(AbramXY[0], AbramXY[1],
+		if(AbramSmokeBudget == VEHICLESMOKEMOD)
+		{
+			struct Smoke tmpSmoke;
+			tmpSmoke.smokeIDBuffer = Time;
+			tmpSmoke.smokeCoordBuffer[0] = AbramXY[0];
+			tmpSmoke.smokeCoordBuffer[1] = AbramXY[1];
+			tmpSmoke.smokeDurBuffer = 0.01;
+			tmpSmoke.smokeAngleBuffer = rand() % 360;
+			tmpSmoke.smokeIDBufferSet = true;
+			tmpSmoke.smokeActive = true;
+			Smokes.push_back(tmpSmoke);
+			AbramSmokeBudget = 0;
+		}
+		else
+		{
+			AbramSmokeBudget++;
+		}
+		std::vector<Crate>::iterator cratecheck = CrateCollisionModel(AbramXY[0], AbramXY[1],
 			AbramTX,
 			AbramTY,
 			-1
 		);
-		if (cratecheck != CRATECAP)
+		if (cratecheck != Crates.end())
 		{
-			switch (Crates[cratecheck].type)
+			switch (cratecheck->type)
 			{
 			case 0:
 				AbramShells = SHELLSTORAGE;
@@ -1077,12 +1101,15 @@ void KeyHandler() {
 				alSourcePlay(Sources[11]);
 				break;
 			case 3:
-				AbramHP -= 3;
+				AbramHP  -= TANKHP;
 				alSourcePlay(Sources[8]);
 				break;
 			}
-			Crates[cratecheck].isActive = false;
-			myMap.isCrate[Crates[cratecheck].i][Crates[cratecheck].j] = false;
+			//Crates[cratecheck].isActive = false;
+			cratecheck->isActive = false;
+			//myMap.isCrate[Crates[cratecheck].i][Crates[cratecheck].j] = false;
+			myMap.isCrate[cratecheck->i][cratecheck->j] = false;
+			Crates.erase(cratecheck);
 		}
 	}
 	if ((keyBuffer['s'] || keyBuffer['S']) && AbramHP > 0) {
@@ -1142,24 +1169,33 @@ void KeyHandler() {
 					AbramHullAngle += TANKSPEED * 5 * 2;
 			}
 		}
-		if (smokeIndex >= 1000)
-			smokeIndex = 0;
-		smokeIDBuffer[smokeIndex] = Time;
-		smokeCoordBuffer[smokeIndex][0] = AbramXY[0];
-		smokeCoordBuffer[smokeIndex][1] = AbramXY[1];
-		smokeDurBuffer[smokeIndex] = 0.01;
-		smokeAngleBuffer[smokeIndex] = rand() % 360;
-		smokeIDBufferSet[smokeIndex] = !smokeIDBufferSet[smokeIndex];
-		smokeActive[smokeIndex] = true;
-		smokeIndex++;
-		int cratecheck = CrateCollisionModel(AbramXY[0], AbramXY[1],
+
+		if (AbramSmokeBudget == VEHICLESMOKEMOD)
+		{
+			struct Smoke tmpSmoke;
+			tmpSmoke.smokeIDBuffer = Time;
+			tmpSmoke.smokeCoordBuffer[0] = AbramXY[0];
+			tmpSmoke.smokeCoordBuffer[1] = AbramXY[1];
+			tmpSmoke.smokeDurBuffer = 0.01;
+			tmpSmoke.smokeAngleBuffer = rand() % 360;
+			tmpSmoke.smokeIDBufferSet = true;
+			tmpSmoke.smokeActive = true;
+			Smokes.push_back(tmpSmoke);
+			AbramSmokeBudget = 0;
+		}
+		else
+		{
+			AbramSmokeBudget++;
+		}
+		
+		std::vector<Crate>::iterator cratecheck = CrateCollisionModel(AbramXY[0], AbramXY[1],
 			AbramTX,
 			AbramTY,
 			1
 		);
-		if (cratecheck != CRATECAP)
+		if (cratecheck != Crates.end())
 		{
-			switch (Crates[cratecheck].type)
+			switch (cratecheck->type)
 			{
 			case 0:
 				AbramShells = SHELLSTORAGE;
@@ -1174,12 +1210,15 @@ void KeyHandler() {
 				alSourcePlay(Sources[11]);
 				break;
 			case 3:
-				AbramHP -= 3;
+				AbramHP  -= TANKHP;
 				alSourcePlay(Sources[8]);
 				break;
 			}
-			Crates[cratecheck].isActive = false;
-			myMap.isCrate[Crates[cratecheck].i][Crates[cratecheck].j] = false;
+			//Crates[cratecheck].isActive = false;
+			cratecheck->isActive = false;
+			//myMap.isCrate[Crates[cratecheck].i][Crates[cratecheck].j] = false;
+			myMap.isCrate[cratecheck->i][cratecheck->j] = false;
+			Crates.erase(cratecheck);
 		}
 	}
 	if ((keyBuffer['a'] || keyBuffer['A']) && AbramHP > 0) {
@@ -1187,32 +1226,50 @@ void KeyHandler() {
 			AbramHullAngle -= TANKSPEED * 5;
 		else
 			AbramHullAngle += TANKSPEED * 5;
-		if (smokeIndex >= 1000)
-			smokeIndex = 0;
-		smokeIDBuffer[smokeIndex] = Time;
-		smokeCoordBuffer[smokeIndex][0] = AbramXY[0];
-		smokeCoordBuffer[smokeIndex][1] = AbramXY[1];
-		smokeDurBuffer[smokeIndex] = 0.01;
-		smokeAngleBuffer[smokeIndex] = rand() % 360;
-		smokeIDBufferSet[smokeIndex] = !smokeIDBufferSet[smokeIndex];
-		smokeActive[smokeIndex] = true;
-		smokeIndex++;
+
+		if (AbramSmokeBudget == VEHICLESMOKEMOD)
+		{
+			struct Smoke tmpSmoke;
+			tmpSmoke.smokeIDBuffer = Time;
+			tmpSmoke.smokeCoordBuffer[0] = AbramXY[0];
+			tmpSmoke.smokeCoordBuffer[1] = AbramXY[1];
+			tmpSmoke.smokeDurBuffer = 0.01;
+			tmpSmoke.smokeAngleBuffer = rand() % 360;
+			tmpSmoke.smokeIDBufferSet = true;
+			tmpSmoke.smokeActive = true;
+			Smokes.push_back(tmpSmoke);
+			AbramSmokeBudget = 0;
+		}
+		else
+		{
+			AbramSmokeBudget++;
+		}
+		
 	}
 	if ((keyBuffer['d'] || keyBuffer['D']) && AbramHP > 0) {
 		if (keyBuffer['s'] || keyBuffer['S'])
 			AbramHullAngle += TANKSPEED * 5;
 		else
 			AbramHullAngle -= TANKSPEED * 5;
-		if (smokeIndex >= 1000)
-			smokeIndex = 0;
-		smokeIDBuffer[smokeIndex] = Time;
-		smokeCoordBuffer[smokeIndex][0] = AbramXY[0];
-		smokeCoordBuffer[smokeIndex][1] = AbramXY[1];
-		smokeDurBuffer[smokeIndex] = 0.01;
-		smokeAngleBuffer[smokeIndex] = rand() % 360;
-		smokeIDBufferSet[smokeIndex] = !smokeIDBufferSet[smokeIndex];
-		smokeActive[smokeIndex] = true;
-		smokeIndex++;
+
+		if (AbramSmokeBudget == VEHICLESMOKEMOD)
+		{
+			struct Smoke tmpSmoke;
+			tmpSmoke.smokeIDBuffer = Time;
+			tmpSmoke.smokeCoordBuffer[0] = AbramXY[0];
+			tmpSmoke.smokeCoordBuffer[1] = AbramXY[1];
+			tmpSmoke.smokeDurBuffer = 0.01;
+			tmpSmoke.smokeAngleBuffer = rand() % 360;
+			tmpSmoke.smokeIDBufferSet = true;
+			tmpSmoke.smokeActive = true;
+			Smokes.push_back(tmpSmoke);
+			AbramSmokeBudget = 0;
+		}
+		else
+		{
+			AbramSmokeBudget++;
+		}
+		
 	}
 	if ((keyBuffer['q'] || keyBuffer['Q']) && AbramHP > 0) {
 		AbramTurretAngle += TANKSPEED * 5;
@@ -1278,24 +1335,33 @@ void KeyHandler() {
 					IS3HullAngle += TANKSPEED * 5 * 2;
 			}
 		}
-		if (smokeIndex >= 1000)
-			smokeIndex = 0;
-		smokeIDBuffer[smokeIndex] = Time;
-		smokeCoordBuffer[smokeIndex][0] = IS3XY[0];
-		smokeCoordBuffer[smokeIndex][1] = IS3XY[1];
-		smokeDurBuffer[smokeIndex] = 0.01;
-		smokeAngleBuffer[smokeIndex] = rand() % 360;
-		smokeIDBufferSet[smokeIndex] = !smokeIDBufferSet[smokeIndex];
-		smokeActive[smokeIndex] = true;
-		smokeIndex++;
-		int cratecheck = CrateCollisionModel(IS3XY[0], IS3XY[1],
+
+		if (IS3SmokeBudget == VEHICLESMOKEMOD)
+		{
+			struct Smoke tmpSmoke;
+			tmpSmoke.smokeIDBuffer = Time;
+			tmpSmoke.smokeCoordBuffer[0] = IS3XY[0];
+			tmpSmoke.smokeCoordBuffer[1] = IS3XY[1];
+			tmpSmoke.smokeDurBuffer = 0.01;
+			tmpSmoke.smokeAngleBuffer = rand() % 360;
+			tmpSmoke.smokeIDBufferSet = true;
+			tmpSmoke.smokeActive = true;
+			Smokes.push_back(tmpSmoke);
+			IS3SmokeBudget = 0;
+		}
+		else
+		{
+			IS3SmokeBudget++;
+		}
+		
+		std::vector<Crate>::iterator cratecheck = CrateCollisionModel(IS3XY[0], IS3XY[1],
 			IS3TX,
 			IS3TX,
 			-1
 		);
-		if (cratecheck != CRATECAP)
+		if (cratecheck != Crates.end())
 		{
-			switch (Crates[cratecheck].type)
+			switch (cratecheck->type)
 			{
 			case 0:
 				IS3Shells = SHELLSTORAGE;
@@ -1310,12 +1376,15 @@ void KeyHandler() {
 				alSourcePlay(Sources[11]);
 				break;
 			case 3:
-				IS3HP -= 3;
+				IS3HP -= TANKHP;
 				alSourcePlay(Sources[8]);
 				break;
 			}
-			Crates[cratecheck].isActive = false;
-			myMap.isCrate[Crates[cratecheck].i][Crates[cratecheck].j] = false;
+			//Crates[cratecheck].isActive = false;
+			cratecheck->isActive = false;
+			//myMap.isCrate[Crates[cratecheck].i][Crates[cratecheck].j] = false;
+			myMap.isCrate[cratecheck->i][cratecheck->j] = false;
+			Crates.erase(cratecheck);
 		}
 	}
 	if ((keyBuffer['k'] || keyBuffer['K'] || keyBuffer['5']) && IS3HP > 0) {
@@ -1375,40 +1444,59 @@ void KeyHandler() {
 					IS3HullAngle += TANKSPEED * 5 * 2;
 			}
 		}
-		if (smokeIndex >= 1000)
-			smokeIndex = 0;
-		smokeIDBuffer[smokeIndex] = Time;
-		smokeCoordBuffer[smokeIndex][0] = IS3XY[0];
-		smokeCoordBuffer[smokeIndex][1] = IS3XY[1];
-		smokeDurBuffer[smokeIndex] = 0.01;
-		smokeAngleBuffer[smokeIndex] = rand() % 360;
-		smokeIDBufferSet[smokeIndex] = !smokeIDBufferSet[smokeIndex];
-		smokeActive[smokeIndex] = true;
-		smokeIndex++;
+		
+		if (IS3SmokeBudget == VEHICLESMOKEMOD)
+		{
+			struct Smoke tmpSmoke;
+			tmpSmoke.smokeIDBuffer = Time;
+			tmpSmoke.smokeCoordBuffer[0] = IS3XY[0];
+			tmpSmoke.smokeCoordBuffer[1] = IS3XY[1];
+			tmpSmoke.smokeDurBuffer = 0.01;
+			tmpSmoke.smokeAngleBuffer = rand() % 360;
+			tmpSmoke.smokeIDBufferSet = true;
+			tmpSmoke.smokeActive = true;
+			Smokes.push_back(tmpSmoke);
+			IS3SmokeBudget = 0;
+		}
+		else
+		{
+			IS3SmokeBudget++;
+		}
+		
 	}
 	if ((keyBuffer['j'] || keyBuffer['J'] || keyBuffer['4']) && IS3HP > 0) {
 		if (keyBuffer['k'] || keyBuffer['K'] || keyBuffer['5'])
 			IS3HullAngle -= TANKSPEED * 5;
 		else
 			IS3HullAngle += TANKSPEED * 5;
-		if (smokeIndex >= 1000)
-			smokeIndex = 0;
-		smokeIDBuffer[smokeIndex] = Time;
-		smokeCoordBuffer[smokeIndex][0] = IS3XY[0];
-		smokeCoordBuffer[smokeIndex][1] = IS3XY[1];
-		smokeDurBuffer[smokeIndex] = 0.01;
-		smokeAngleBuffer[smokeIndex] = rand() % 360;
-		smokeIDBufferSet[smokeIndex] = !smokeIDBufferSet[smokeIndex];
-		smokeActive[smokeIndex] = true;
-		smokeIndex++;
-		int cratecheck = CrateCollisionModel(IS3XY[0], IS3XY[1],
+		
+		if (IS3SmokeBudget == VEHICLESMOKEMOD)
+		{
+			struct Smoke tmpSmoke;
+			tmpSmoke.smokeIDBuffer = Time;
+			tmpSmoke.smokeCoordBuffer[0] = IS3XY[0];
+			tmpSmoke.smokeCoordBuffer[1] = IS3XY[1];
+			tmpSmoke.smokeDurBuffer = 0.01;
+			tmpSmoke.smokeAngleBuffer = rand() % 360;
+			tmpSmoke.smokeIDBufferSet = true;
+			tmpSmoke.smokeActive = true;
+			Smokes.push_back(tmpSmoke);
+			IS3SmokeBudget = 0;
+		}
+		else
+		{
+			IS3SmokeBudget++;
+		}
+		
+		
+		std::vector<Crate>::iterator cratecheck = CrateCollisionModel(IS3XY[0], IS3XY[1],
 			IS3TX,
 			IS3TX,
 			1
 		);
-		if (cratecheck != CRATECAP)
+		if (cratecheck != Crates.end())
 		{
-			switch (Crates[cratecheck].type)
+			switch (cratecheck->type)
 			{
 			case 0:
 				IS3Shells = SHELLSTORAGE;
@@ -1423,12 +1511,15 @@ void KeyHandler() {
 				alSourcePlay(Sources[11]);
 				break;
 			case 3:
-				IS3HP -= 3;
+				IS3HP -= TANKHP;
 				alSourcePlay(Sources[8]);
 				break;
 			}
-			Crates[cratecheck].isActive = false;
-			myMap.isCrate[Crates[cratecheck].i][Crates[cratecheck].j] = false;
+			//Crates[cratecheck].isActive = false;
+			cratecheck->isActive = false;
+			//myMap.isCrate[Crates[cratecheck].i][Crates[cratecheck].j] = false;
+			myMap.isCrate[cratecheck->i][cratecheck->j] = false;
+			Crates.erase(cratecheck);
 		}
 	}
 	if ((keyBuffer['l'] || keyBuffer['L'] || keyBuffer['6']) && IS3HP > 0) {
@@ -1436,16 +1527,25 @@ void KeyHandler() {
 			IS3HullAngle += TANKSPEED * 5;
 		else
 			IS3HullAngle -= TANKSPEED * 5;
-		if (smokeIndex >= 1000)
-			smokeIndex = 0;
-		smokeIDBuffer[smokeIndex] = Time;
-		smokeCoordBuffer[smokeIndex][0] = IS3XY[0];
-		smokeCoordBuffer[smokeIndex][1] = IS3XY[1];
-		smokeDurBuffer[smokeIndex] = 0.01;
-		smokeAngleBuffer[smokeIndex] = rand() % 360;
-		smokeIDBufferSet[smokeIndex] = !smokeIDBufferSet[smokeIndex];
-		smokeActive[smokeIndex] = true;
-		smokeIndex++;
+		
+		if (IS3SmokeBudget == VEHICLESMOKEMOD)
+		{
+			struct Smoke tmpSmoke;
+			tmpSmoke.smokeIDBuffer = Time;
+			tmpSmoke.smokeCoordBuffer[0] = IS3XY[0];
+			tmpSmoke.smokeCoordBuffer[1] = IS3XY[1];
+			tmpSmoke.smokeDurBuffer = 0.01;
+			tmpSmoke.smokeAngleBuffer = rand() % 360;
+			tmpSmoke.smokeIDBufferSet = true;
+			tmpSmoke.smokeActive = true;
+			Smokes.push_back(tmpSmoke);
+			IS3SmokeBudget = 0;
+		}
+		else
+		{
+			IS3SmokeBudget++;
+		}
+		
 	}
 	if ((keyBuffer['u'] || keyBuffer['U'] || keyBuffer['7']) && IS3HP > 0) {
 		IS3TurretAngle += TANKSPEED * 5;
@@ -1455,6 +1555,7 @@ void KeyHandler() {
 	}
 	if (keyBuffer[ESCAPE]) {
 		isInMenu = true;
+		resetState();
 		for (int i = 0; i < 8; i++)
 			alSourceStop(Sources[i]);
 	}
@@ -1478,18 +1579,18 @@ void KeyHandler() {
 			else
 				shellSize = 0;
 			AbramShells--;
-			if (smokeIndex >= 1000)
-				smokeIndex = 0;
-			for (int i = 0; i < 20; i++)
+			for (int i = 0; i < 5; i++)
 			{
-				smokeIDBuffer[smokeIndex] = Time;
-				smokeCoordBuffer[smokeIndex][0] = AbramXY[0] - 5 * sin((AbramTurretAngle + AbramHullAngle) * PI / 180.0);
-				smokeCoordBuffer[smokeIndex][1] = AbramXY[1] - 5 * cos((AbramTurretAngle + AbramHullAngle) * PI / 180.0);
-				smokeDurBuffer[smokeIndex] = 0.015;
-				smokeAngleBuffer[smokeIndex] = rand() % 360;
-				smokeIDBufferSet[smokeIndex] = !smokeIDBufferSet[smokeIndex];
-				smokeActive[smokeIndex] = true;
-				smokeIndex++;
+				struct Smoke tmpSmoke;
+				tmpSmoke.smokeIDBuffer = Time;
+				tmpSmoke.smokeCoordBuffer[0] = AbramXY[0] - 5 * sin((AbramTurretAngle + AbramHullAngle) * PI / 180.0);
+				tmpSmoke.smokeCoordBuffer[1] = AbramXY[1] - 5 * cos((AbramTurretAngle + AbramHullAngle) * PI / 180.0);
+				tmpSmoke.smokeDurBuffer = 0.015;
+				tmpSmoke.smokeAngleBuffer = rand() % 360;
+				tmpSmoke.smokeIDBufferSet = true;
+				tmpSmoke.smokeActive = true;
+				Smokes.push_back(tmpSmoke);
+				
 			}
 		}
 	}
@@ -1513,16 +1614,19 @@ void KeyHandler() {
 			else
 				shellSize = 0;
 			IS3Shells--;
-			for (int i = 0; i < 20; i++)
+			for (int i = 0; i < 5; i++)
 			{
-				smokeIDBuffer[smokeIndex] = Time;
-				smokeCoordBuffer[smokeIndex][0] = IS3XY[0] - 5 * sin((IS3TurretAngle + IS3HullAngle) * PI / 180.0);
-				smokeCoordBuffer[smokeIndex][1] = IS3XY[1] - 5 * cos((IS3TurretAngle + IS3HullAngle) * PI / 180.0);
-				smokeDurBuffer[smokeIndex] = 0.015;
-				smokeAngleBuffer[smokeIndex] = rand() % 360;
-				smokeIDBufferSet[smokeIndex] = !smokeIDBufferSet[smokeIndex];
-				smokeActive[smokeIndex] = true;
-				smokeIndex++;
+				
+				struct Smoke tmpSmoke;
+				tmpSmoke.smokeIDBuffer = Time;
+				tmpSmoke.smokeCoordBuffer[0] = AbramXY[0] - 5 * sin((IS3TurretAngle + IS3HullAngle) * PI / 180.0);
+				tmpSmoke.smokeCoordBuffer[1] = AbramXY[1] - 5 * cos((IS3TurretAngle + IS3HullAngle) * PI / 180.0);
+				tmpSmoke.smokeDurBuffer = 0.015;
+				tmpSmoke.smokeAngleBuffer = rand() % 360;
+				tmpSmoke.smokeIDBufferSet = true;
+				tmpSmoke.smokeActive = true;
+				Smokes.push_back(tmpSmoke);
+				
 			}
 		}
 	}
@@ -2774,7 +2878,7 @@ void drawMenu()
 							myMap.MCM[i][j] = false;
 							myMap.isSolid[i][j] = false;
 						}
-						/**/// Push the GL attribute bits so that we don't wreck any settings
+						// Push the GL attribute bits so that we don't wreck any settings
 						glPushAttrib(GL_ALL_ATTRIB_BITS);
 						// Enable polygon offsets, and offset filled polygons forward by 2.5
 						// Set the render mode to be line rendering with a thick line width
@@ -2785,14 +2889,14 @@ void drawMenu()
 						// Set the colour to be white
 						glColor3f(.5, .5, .5);
 						// Render the object
-						// draw map border/**/
+						// draw map border
 						//DO TOON SHADING
 						PatternSilh->Use();
 						drawCube(myMap.coord[i][j][0], myMap.coord[i][j][1], myMap.coord[i][j][2], myMap.color[i][j][0], myMap.color[i][j][1], myMap.color[i][j][2]);
 						PatternSilh->Use(0);
 						glEnable(GL_POLYGON_OFFSET_FILL);
 						glPolygonOffset(-2.5f, -2.5f);
-						/**/glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+						glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 						//glShadeModel(GL_FLAT);
 						//glEnable(GL_LIGHTING);
 						//SetPointLight(GL_LIGHT1, 0, 60, 90, 0.65, 0.5, 0.5);
@@ -2801,7 +2905,7 @@ void drawMenu()
 						drawCube(myMap.coord[i][j][0], myMap.coord[i][j][1], myMap.coord[i][j][2], myMap.color[i][j][0], myMap.color[i][j][1], myMap.color[i][j][2]);
 						glPopAttrib();
 						//glDisable(GL_LIGHT1);
-						//glDisable(GL_LIGHTING);/**/
+						//glDisable(GL_LIGHTING);
 						Pattern->Use(0);
 					}
 					if ((myMap.MCM[i][j] && !myMap.isSolid[i][j]) || (myMap.color[i][j][0] == 7))
@@ -3016,7 +3120,7 @@ void drawMenu()
 							myMap.MCM[i][j] = false;
 							myMap.isSolid[i][j] = false;
 						}
-						/**/// Push the GL attribute bits so that we don't wreck any settings
+						// Push the GL attribute bits so that we don't wreck any settings
 						glPushAttrib(GL_ALL_ATTRIB_BITS);
 						// Enable polygon offsets, and offset filled polygons forward by 2.5
 						// Set the render mode to be line rendering with a thick line width
@@ -3027,14 +3131,14 @@ void drawMenu()
 						// Set the colour to be white
 						glColor3f(.5, .5, .5);
 						// Render the object
-						// draw map border/**/
+						// draw map border
 						//DO TOON SHADING
 						PatternSilh->Use();
 						drawCube(myMap.coord[i][j][0], myMap.coord[i][j][1], myMap.coord[i][j][2], myMap.color[i][j][0], myMap.color[i][j][1], myMap.color[i][j][2]);
 						PatternSilh->Use(0);
 						glEnable(GL_POLYGON_OFFSET_FILL);
 						glPolygonOffset(-2.5f, -2.5f);
-						/**/glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+						glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 						//glShadeModel(GL_FLAT);
 						//glEnable(GL_LIGHTING);
 						//SetPointLight(GL_LIGHT1, 0, 60, 90, 0.65, 0.5, 0.5);
@@ -3043,7 +3147,7 @@ void drawMenu()
 						drawCube(myMap.coord[i][j][0], myMap.coord[i][j][1], myMap.coord[i][j][2], myMap.color[i][j][0], myMap.color[i][j][1], myMap.color[i][j][2]);
 						glPopAttrib();
 						//glDisable(GL_LIGHT1);
-						//glDisable(GL_LIGHTING);/**/
+						//glDisable(GL_LIGHTING);
 						Pattern->Use(0);
 					}
 					if ((myMap.MCM[i][j] && !myMap.isSolid[i][j]) || (myMap.color[i][j][0] == 7))
@@ -3268,7 +3372,7 @@ void drawMenu()
 							myMap.MCM[i][j] = false;
 							myMap.isSolid[i][j] = false;
 						}
-						/**/// Push the GL attribute bits so that we don't wreck any settings
+						// Push the GL attribute bits so that we don't wreck any settings
 						glPushAttrib(GL_ALL_ATTRIB_BITS);
 						// Enable polygon offsets, and offset filled polygons forward by 2.5
 						// Set the render mode to be line rendering with a thick line width
@@ -3279,14 +3383,14 @@ void drawMenu()
 						// Set the colour to be white
 						glColor3f(.5, .5, .5);
 						// Render the object
-						// draw map border/**/
+						// draw map border
 						//DO TOON SHADING
 						PatternSilh->Use();
 						drawCube(myMap.coord[i][j][0], myMap.coord[i][j][1], myMap.coord[i][j][2], myMap.color[i][j][0], myMap.color[i][j][1], myMap.color[i][j][2]);
 						PatternSilh->Use(0);
 						glEnable(GL_POLYGON_OFFSET_FILL);
 						glPolygonOffset(-2.5f, -2.5f);
-						/**/glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+						glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 						//glShadeModel(GL_FLAT);
 						//glEnable(GL_LIGHTING);
 						//SetPointLight(GL_LIGHT1, 0, 60, 90, 0.65, 0.5, 0.5);
@@ -3295,7 +3399,7 @@ void drawMenu()
 						drawCube(myMap.coord[i][j][0], myMap.coord[i][j][1], myMap.coord[i][j][2], myMap.color[i][j][0], myMap.color[i][j][1], myMap.color[i][j][2]);
 						glPopAttrib();
 						//glDisable(GL_LIGHT1);
-						//glDisable(GL_LIGHTING);/**/
+						//glDisable(GL_LIGHTING);
 						Pattern->Use(0);
 					}
 					if ((myMap.MCM[i][j] && !myMap.isSolid[i][j]) || (myMap.color[i][j][0] == 7))
@@ -3400,7 +3504,7 @@ void drawMenu()
 							myMap.MCM[i][j] = false;
 							myMap.isSolid[i][j] = false;
 						}
-						/**/// Push the GL attribute bits so that we don't wreck any settings
+						// Push the GL attribute bits so that we don't wreck any settings
 						glPushAttrib(GL_ALL_ATTRIB_BITS);
 						// Enable polygon offsets, and offset filled polygons forward by 2.5
 						// Set the render mode to be line rendering with a thick line width
@@ -3411,14 +3515,14 @@ void drawMenu()
 						// Set the colour to be white
 						glColor3f(.5, .5, .5);
 						// Render the object
-						// draw map border/**/
+						// draw map border
 						//DO TOON SHADING
 						PatternSilh->Use();
 						drawCube(myMap.coord[i][j][0], myMap.coord[i][j][1], myMap.coord[i][j][2], myMap.color[i][j][0], myMap.color[i][j][1], myMap.color[i][j][2]);
 						PatternSilh->Use(0);
 						glEnable(GL_POLYGON_OFFSET_FILL);
 						glPolygonOffset(-2.5f, -2.5f);
-						/**/glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+						glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 						//glShadeModel(GL_FLAT);
 						//glEnable(GL_LIGHTING);
 						//SetPointLight(GL_LIGHT1, 0, 60, 90, 0.65, 0.5, 0.5);
@@ -3427,7 +3531,7 @@ void drawMenu()
 						drawCube(myMap.coord[i][j][0], myMap.coord[i][j][1], myMap.coord[i][j][2], myMap.color[i][j][0], myMap.color[i][j][1], myMap.color[i][j][2]);
 						glPopAttrib();
 						//glDisable(GL_LIGHT1);
-						//glDisable(GL_LIGHTING);/**/
+						//glDisable(GL_LIGHTING);
 						Pattern->Use(0);
 					}
 					if ((myMap.MCM[i][j] && !myMap.isSolid[i][j]) || (myMap.color[i][j][0] == 7))
@@ -3534,7 +3638,7 @@ void drawMenu()
 							myMap.MCM[i][j] = false;
 							myMap.isSolid[i][j] = false;
 						}
-						/**/// Push the GL attribute bits so that we don't wreck any settings
+						// Push the GL attribute bits so that we don't wreck any settings
 						glPushAttrib(GL_ALL_ATTRIB_BITS);
 						// Enable polygon offsets, and offset filled polygons forward by 2.5
 						// Set the render mode to be line rendering with a thick line width
@@ -3545,14 +3649,14 @@ void drawMenu()
 						// Set the colour to be white
 						glColor3f(.5, .5, .5);
 						// Render the object
-						// draw map border/**/
+						// draw map border
 						//DO TOON SHADING
 						PatternSilh->Use();
 						drawCube(myMap.coord[i][j][0], myMap.coord[i][j][1], myMap.coord[i][j][2], myMap.color[i][j][0], myMap.color[i][j][1], myMap.color[i][j][2]);
 						PatternSilh->Use(0);
 						glEnable(GL_POLYGON_OFFSET_FILL);
 						glPolygonOffset(-2.5f, -2.5f);
-						/**/glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+						glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 						//glShadeModel(GL_FLAT);
 						//glEnable(GL_LIGHTING);
 						//SetPointLight(GL_LIGHT1, 0, 60, 90, 0.65, 0.5, 0.5);
@@ -3561,7 +3665,7 @@ void drawMenu()
 						drawCube(myMap.coord[i][j][0], myMap.coord[i][j][1], myMap.coord[i][j][2], myMap.color[i][j][0], myMap.color[i][j][1], myMap.color[i][j][2]);
 						glPopAttrib();
 						//glDisable(GL_LIGHT1);
-						//glDisable(GL_LIGHTING);/**/
+						//glDisable(GL_LIGHTING);
 						Pattern->Use(0);
 					}
 					if ((myMap.MCM[i][j] && !myMap.isSolid[i][j]) || (myMap.color[i][j][0] == 7))
@@ -3775,7 +3879,7 @@ void drawMenu()
 							myMap.MCM[i][j] = false;
 							myMap.isSolid[i][j] = false;
 						}
-						/**/// Push the GL attribute bits so that we don't wreck any settings
+						// Push the GL attribute bits so that we don't wreck any settings
 						glPushAttrib(GL_ALL_ATTRIB_BITS);
 						// Enable polygon offsets, and offset filled polygons forward by 2.5
 						// Set the render mode to be line rendering with a thick line width
@@ -3786,14 +3890,14 @@ void drawMenu()
 						// Set the colour to be white
 						glColor3f(.5, .5, .5);
 						// Render the object
-						// draw map border/**/
+						// draw map border
 						//DO TOON SHADING
 						PatternSilh->Use();
 						drawCube(myMap.coord[i][j][0], myMap.coord[i][j][1], myMap.coord[i][j][2], myMap.color[i][j][0], myMap.color[i][j][1], myMap.color[i][j][2]);
 						PatternSilh->Use(0);
 						glEnable(GL_POLYGON_OFFSET_FILL);
 						glPolygonOffset(-2.5f, -2.5f);
-						/**/glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+						glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 						//glShadeModel(GL_FLAT);
 						//glEnable(GL_LIGHTING);
 						//SetPointLight(GL_LIGHT1, 0, 60, 90, 0.65, 0.5, 0.5);
@@ -3802,7 +3906,7 @@ void drawMenu()
 						drawCube(myMap.coord[i][j][0], myMap.coord[i][j][1], myMap.coord[i][j][2], myMap.color[i][j][0], myMap.color[i][j][1], myMap.color[i][j][2]);
 						glPopAttrib();
 						//glDisable(GL_LIGHT1);
-						//glDisable(GL_LIGHTING);/**/
+						//glDisable(GL_LIGHTING);
 						Pattern->Use(0);
 					}
 					if ((myMap.MCM[i][j] && !myMap.isSolid[i][j]) || (myMap.color[i][j][0] == 7))
@@ -3951,7 +4055,7 @@ void drawMenu()
 						myMap.MCM[i][j] = false;
 						myMap.isSolid[i][j] = false;
 					}
-					/**/// Push the GL attribute bits so that we don't wreck any settings
+					// Push the GL attribute bits so that we don't wreck any settings
 					glPushAttrib(GL_ALL_ATTRIB_BITS);
 					// Enable polygon offsets, and offset filled polygons forward by 2.5
 					// Set the render mode to be line rendering with a thick line width
@@ -3962,14 +4066,14 @@ void drawMenu()
 					// Set the colour to be white
 					glColor3f(.5, .5, .5);
 					// Render the object
-					// draw map border/**/
+					// draw map border
 					//DO TOON SHADING
 					PatternSilh->Use();
 					drawCube(myMap.coord[i][j][0], myMap.coord[i][j][1], myMap.coord[i][j][2], myMap.color[i][j][0], myMap.color[i][j][1], myMap.color[i][j][2]);
 					PatternSilh->Use(0);
 					glEnable(GL_POLYGON_OFFSET_FILL);
 					glPolygonOffset(-2.5f, -2.5f);
-					/**/glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+					glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 					//glShadeModel(GL_FLAT);
 					//glEnable(GL_LIGHTING);
 					//SetPointLight(GL_LIGHT1, 0, 60, 90, 0.65, 0.5, 0.5);
@@ -3978,7 +4082,7 @@ void drawMenu()
 					drawCube(myMap.coord[i][j][0], myMap.coord[i][j][1], myMap.coord[i][j][2], myMap.color[i][j][0], myMap.color[i][j][1], myMap.color[i][j][2]);
 					glPopAttrib();
 					//glDisable(GL_LIGHT1);
-					//glDisable(GL_LIGHTING);/**/
+					//glDisable(GL_LIGHTING);
 					Pattern->Use(0);
 				}
 				if ((myMap.MCM[i][j] && !myMap.isSolid[i][j]) || (myMap.color[i][j][0] == 7))
@@ -4685,10 +4789,36 @@ void drawMenuText()
 		else
 			glColor3f(1., 1., 1.);
 		inc++;
-		char buffer[5];
-		itoa(userGrassMultiplier,buffer,10);
-		char text[50] = "Grass Count: ";
-		DoRasterString(40, y - 2, 0, (char *)strcat(text, buffer));
+		char buffer1[5];
+		itoa(userGrassMultiplier,buffer1,10);
+		char text1[50] = "Grass Count: ";
+		DoRasterString(40, y - 2, 0, (char *)strcat(text1, buffer1));
+
+		if (selectIndex == 1)
+		{
+			glColor3f(1., 1., 0);
+		}
+		else
+			glColor3f(1., 1., 1.);
+		inc++;
+		char buffer2[5];
+		itoa((int)(TANKSPEED*100), buffer2, 10);
+		char text2[50] = "Movement Speed: ";
+		DoRasterString(40, y - 4, 0, (char *)strcat(text2, buffer2));
+		
+		if (selectIndex == 2)
+		{
+			glColor3f(1., 1., 0);
+		}
+		else
+			glColor3f(1., 1., 1.);
+		inc++;
+		char buffer3[5];
+		int shellspeed = SHELLSPEED/100;
+		itoa(shellspeed, buffer3, 10);
+		char text3[50] = "Shell Speed: ";
+		DoRasterString(40, y - 6, 0, (char *)strcat(text3, buffer3));
+
 	}
 	break;
 	case 6:	// credits: Display contact information
@@ -5316,11 +5446,6 @@ void Display()
 	else
 		gluLookAt(eyex, eyey, eyez, targetx, targety, targetz, upx, upy, upz);
 
-	//glScalef((GLfloat)Scale, (GLfloat)Scale, (GLfloat)Scale);
-	// set the fog parameters:
-
-	//	glDisable(GL_FOG);
-
 	// Costume polys for each frame (instapoly):__________________________________________________________________________________________________________________________
 	
 	if (res && isInMenu)
@@ -5665,30 +5790,6 @@ void Display()
 		//SetPointLight(GL_LIGHT0, 20, 50, 35, 0.25, 0.25, 0.25);
 
 		//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-		/*glActiveTexture(GL_TEXTURE0);
-		glEnable(GL_TEXTURE_2D);
-		glGenTextures(1, &tex0);
-		glBindTexture(GL_TEXTURE_2D, tex0);
-		glBindTexture(GL_TEXTURE0, tex0);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-		glTexImage2D(GL_TEXTURE_2D,
-			0,
-			GL_RGB,
-			width,
-			height,
-			0,
-			GL_RGB,
-			GL_UNSIGNED_BYTE,
-			Texture
-		);
-		glGenerateMipmap(GL_TEXTURE_2D);
-		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, tex0);*/
 
 		PatternCamo->Use();
 		// Set the colour to the background
@@ -5748,7 +5849,7 @@ void Display()
 						myMap.MCM[i][j] = false;
 						myMap.isSolid[i][j] = false;
 					}
-					/**/// Push the GL attribute bits so that we don't wreck any settings
+					// Push the GL attribute bits so that we don't wreck any settings
 					glPushAttrib(GL_ALL_ATTRIB_BITS);
 					// Enable polygon offsets, and offset filled polygons forward by 2.5
 					// Set the render mode to be line rendering with a thick line width
@@ -5759,14 +5860,14 @@ void Display()
 					// Set the colour to be white
 					glColor3f(.5, .5, .5);
 					// Render the object
-					// draw map border/**/
+					// draw map border
 					//DO TOON SHADING
 					PatternSilh->Use();
 					drawCube(myMap.coord[i][j][0], myMap.coord[i][j][1], myMap.coord[i][j][2], myMap.color[i][j][0], myMap.color[i][j][1], myMap.color[i][j][2]);
 					PatternSilh->Use(0);
 					glEnable(GL_POLYGON_OFFSET_FILL);
 					glPolygonOffset(-2.5f, -2.5f);
-					/**/glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+					glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 					//glShadeModel(GL_FLAT);
 					//glEnable(GL_LIGHTING);
 					//SetPointLight(GL_LIGHT1, 0, 60, 90, 0.65, 0.5, 0.5);
@@ -5775,7 +5876,7 @@ void Display()
 					drawCube(myMap.coord[i][j][0], myMap.coord[i][j][1], myMap.coord[i][j][2], myMap.color[i][j][0], myMap.color[i][j][1], myMap.color[i][j][2]);
 					glPopAttrib();
 					//glDisable(GL_LIGHT1);
-					//glDisable(GL_LIGHTING);/**/
+					//glDisable(GL_LIGHTING);
 					Pattern->Use(0);
 
 				}
@@ -5816,9 +5917,8 @@ void Display()
 		}
 
 		//Smoke
-		for (int i = 0; i < 1000; i = i + 10)
-		{
-			if (smokeActive[i]) {
+		for (std::vector<Smoke>::iterator it = Smokes.begin(); it != Smokes.end();) {
+			if (it->smokeActive) {
 				// Push the GL attribute bits so that we don't wreck any settings
 				glPushAttrib(GL_ALL_ATTRIB_BITS);
 				// Enable polygon offsets, and offset filled polygons forward by 2.5
@@ -5831,7 +5931,7 @@ void Display()
 				glColor3f(.5, .5, .5);
 				// Render the object
 				PatternSilh->Use();
-				drawSmoke(smokeCoordBuffer[i][0], smokeCoordBuffer[i][1], 0, smokeAngleBuffer[i], 0.05, 0.59, 0.52, 0.48, smokeIDBuffer[i], smokeDurBuffer[i]);
+				drawSmoke(it->smokeCoordBuffer[0], it->smokeCoordBuffer[1], 0, it->smokeAngleBuffer, 0.05, 0.59, 0.52, 0.48, it->smokeIDBuffer, it->smokeDurBuffer);
 				PatternSilh->Use(0);
 				glEnable(GL_POLYGON_OFFSET_FILL);
 				glPolygonOffset(-2.5f, -2.5f);
@@ -5841,14 +5941,22 @@ void Display()
 				glEnable(GL_LIGHTING);
 				SetPointLight(GL_LIGHT1, 20, 50, 35, 0.75, 0.75, 0.75);
 				glColor3f(0.0f, 0.0f, 0.0f);
-				drawSmoke(smokeCoordBuffer[i][0], smokeCoordBuffer[i][1], 0, smokeAngleBuffer[i], 0.05, 0.59, 0.52, 0.48, smokeIDBuffer[i], smokeDurBuffer[i]);
+				drawSmoke(it->smokeCoordBuffer[0], it->smokeCoordBuffer[1], 0, it->smokeAngleBuffer, 0.05, 0.59, 0.52, 0.48, it->smokeIDBuffer, it->smokeDurBuffer);
 				glPopAttrib();
 				glDisable(GL_LIGHT1);
 				glDisable(GL_LIGHTING);
-				if ((Time - smokeIDBuffer[i]) > smokeDurBuffer[i])
-					smokeActive[i] = false;
+				if ((Time - it->smokeIDBuffer) > it->smokeDurBuffer)
+				{
+					it->smokeActive = false;
+					it = Smokes.erase(it);
+				}
+				else
+				{
+					++it;
+				}
 			}
 		}
+
 		//draw crates
 		glPushAttrib(GL_ALL_ATTRIB_BITS);
 		// Enable polygon offsets, and offset filled polygons forward by 2.5
@@ -5861,25 +5969,27 @@ void Display()
 		glColor3f(.5, .5, .5);
 		// Render the object
 		PatternSilh->Use();
-		for (int i = 0; i < CRATECAP; i++)
+		for (std::vector<Crate>::iterator it = Crates.begin(); it != Crates.end(); ++it)
 		{
-			if (Crates[i].isActive)
-				switch (Crates[i].type)
+
+			if (it->isActive)
+				switch (it->type)
 				{
 				case 0:
-					drawAmmo(Crates[i].X, Crates[i].Y);
+					drawAmmo(it->X, it->Y);
 					break;
 				case 1:
-					drawSmokeCrate(Crates[i].X, Crates[i].Y);
+					drawSmokeCrate(it->X, it->Y);
 					break;
 				case 2:
-					drawHPCrate(Crates[i].X, Crates[i].Y);
+					drawHPCrate(it->X, it->Y);
 					break;
 				case 3:
-					drawMine(Crates[i].X, Crates[i].Y);
+					drawMine(it->X, it->Y);
 					break;
 				}
 		}
+
 		PatternSilh->Use(0);
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glPolygonOffset(-2.5f, -2.5f);
@@ -5890,25 +6000,27 @@ void Display()
 		//SetPointLight(GL_LIGHT1, 20, 50, 35, 0.75, 0.75, 0.75);
 		Pattern->Use();
 		glColor3f(0.0f, 0.0f, 0.0f);
-		for (int i = 0; i < 9; i++)
+		for (std::vector<Crate>::iterator it = Crates.begin(); it != Crates.end(); ++it)
 		{
-			if (Crates[i].isActive)
-				switch (Crates[i].type)
+
+			if (it->isActive)
+				switch (it->type)
 				{
 				case 0:
-					drawAmmo(Crates[i].X, Crates[i].Y);
+					drawAmmo(it->X, it->Y);
 					break;
 				case 1:
-					drawSmokeCrate(Crates[i].X, Crates[i].Y);
+					drawSmokeCrate(it->X, it->Y);
 					break;
 				case 2:
-					drawHPCrate(Crates[i].X, Crates[i].Y);
+					drawHPCrate(it->X, it->Y);
 					break;
 				case 3:
-					drawMine(Crates[i].X, Crates[i].Y);
+					drawMine(it->X, it->Y);
 					break;
 				}
 		}
+
 		glPopAttrib();
 		Pattern->Use(0);
 		//glDisable(GL_LIGHT1);
@@ -6077,15 +6189,19 @@ void Display()
 				int tmpi;
 				int tmpj;
 				//CrateCollisionModel
-				int cratecheck = CrateCollisionModel(Shells[i].x, Shells[i].y,
+
+				std::vector<Crate>::iterator cratecheck = CrateCollisionModel(Shells[i].x, Shells[i].y,
 					(Time - Shells[i].startTime) * SHELLSPEED * sin(Shells[i].angle * PI / 180.0),
 					(Time - Shells[i].startTime) * SHELLSPEED * cos(Shells[i].angle * PI / 180.0),
 					-1
 				);
-				if (cratecheck != CRATECAP)
+				if (cratecheck != Crates.end())
 				{
-					Crates[cratecheck].isActive = false;
-					myMap.isCrate[Crates[cratecheck].i][Crates[cratecheck].j] = false;
+					//Crates[cratecheck].isActive = false;
+					cratecheck->isActive = false;
+					//myMap.isCrate[Crates[cratecheck].i][Crates[cratecheck].j] = false;
+					myMap.isCrate[cratecheck->i][cratecheck->j] = false;
+					Crates.erase(cratecheck);
 				}
 				if (
 					MapCollisionModel(Shells[i].x, Shells[i].y,
@@ -6100,52 +6216,44 @@ void Display()
 				{
 					if (myMap.MCM[tmpi][tmpj] && myMap.isSolid[tmpi][tmpj] && myMap.color[tmpi][tmpj][0] != 7)
 					{
-						CrateIndex++;	// randomly generate crates
-						if (CrateIndex > CRATECAP)
-							CrateIndex = 0;
 						int wallState = rand() % 6;
 						myMap.isCrate[tmpi][tmpj] = true;
+						Crate tmpCrate;
+						tmpCrate.X = myMap.coord[tmpi][tmpj][0];
+						tmpCrate.Y = myMap.coord[tmpi][tmpj][1];
+						tmpCrate.isActive = true;
+						tmpCrate.i = tmpi;
+						tmpCrate.j = tmpj;
 						switch (wallState)
 						{
 						case 0:
 						case 1:
 						case 2:
-							Crates[CrateIndex].type = AMMOCRATE;
-							Crates[CrateIndex].X = myMap.coord[tmpi][tmpj][0];
-							Crates[CrateIndex].Y = myMap.coord[tmpi][tmpj][1];
-							Crates[CrateIndex].isActive = true;
+							tmpCrate.type = AMMOCRATE;
 							break;
 						case 3:
-							Crates[CrateIndex].type = SMOKECRATE;
-							Crates[CrateIndex].X = myMap.coord[tmpi][tmpj][0];
-							Crates[CrateIndex].Y = myMap.coord[tmpi][tmpj][1];
-							Crates[CrateIndex].isActive = true;
+							tmpCrate.type = SMOKECRATE;
 							break;
 						case 4:
-							Crates[CrateIndex].type = HPCRATE;
-							Crates[CrateIndex].X = myMap.coord[tmpi][tmpj][0];
-							Crates[CrateIndex].Y = myMap.coord[tmpi][tmpj][1];
-							Crates[CrateIndex].isActive = true;
+							tmpCrate.type = HPCRATE;
 							break;
 						case 5:
-							Crates[CrateIndex].type = MINECRATE;// RELOADCRATE;
-							Crates[CrateIndex].X = myMap.coord[tmpi][tmpj][0];
-							Crates[CrateIndex].Y = myMap.coord[tmpi][tmpj][1];
-							Crates[CrateIndex].isActive = true;
+							tmpCrate.type = MINECRATE;// RELOADCRATE;
 							break;
 						}
-						for (int i = 0; i < 50; i++)
+						Crates.push_back(tmpCrate);
+						for (int i = 0; i < 5; i++)
 						{
-							if (smokeIndex >= 1000)
-								smokeIndex = 0;
-							smokeIDBuffer[smokeIndex] = Time;
-							smokeCoordBuffer[smokeIndex][0] = myMap.coord[tmpi][tmpj][0];
-							smokeCoordBuffer[smokeIndex][1] = myMap.coord[tmpi][tmpj][1];
-							smokeAngleBuffer[smokeIndex] = rand() % 360;
-							smokeDurBuffer[smokeIndex] = 0.02;
-							smokeIDBufferSet[smokeIndex] = !smokeIDBufferSet[smokeIndex];
-							smokeActive[smokeIndex] = true;
-							smokeIndex++;
+							struct Smoke tmpSmoke;
+							tmpSmoke.smokeIDBuffer = Time;
+							tmpSmoke.smokeCoordBuffer[0] = myMap.coord[tmpi][tmpj][0];
+							tmpSmoke.smokeCoordBuffer[1] = myMap.coord[tmpi][tmpj][1];
+							tmpSmoke.smokeDurBuffer = 0.02;
+							tmpSmoke.smokeAngleBuffer = rand() % 360;
+							tmpSmoke.smokeIDBufferSet = true;
+							tmpSmoke.smokeActive = true;
+							Smokes.push_back(tmpSmoke);
+							
 						}
 						destructionTimeBuffer[tmpi][tmpj] = Time;
 						Shells[i].active = false;
@@ -6164,120 +6272,6 @@ void Display()
 	glutSwapBuffers();
 	glFlush();
 }
-/*void DoAxesMenu(int id)
-{
-	AxesOn = id;
-
-	glutSetWindow(MainWindow);
-	glutPostRedisplay();
-}
-void DoColorMenu(int id)
-{
-	WhichColor = id - RED;
-
-	glutSetWindow(MainWindow);
-	glutPostRedisplay();
-}
-void DoDebugMenu(int id)
-{
-	DebugOn = id;
-
-	glutSetWindow(MainWindow);
-	glutPostRedisplay();
-}
-void DoDepthBufferMenu(int id)
-{
-	DepthBufferOn = id;
-
-	glutSetWindow(MainWindow);
-	glutPostRedisplay();
-} 
-void DoDepthFightingMenu(int id)
-{
-	DepthFightingOn = id;
-
-	glutSetWindow(MainWindow);
-	glutPostRedisplay();
-}
-void DoDepthMenu(int id)
-{
-	DepthCueOn = id;
-
-	glutSetWindow(MainWindow);
-	glutPostRedisplay();
-}
-void DoCameraMenu(int id)
-{
-	if (id == 0)
-	{
-		eyex = 10;
-		eyey = 10;
-		eyez = 10;
-		targetx = 0;
-		targety = 0;
-		targetz = 0;
-		upx = 0;
-		upy = 1;
-		upz = 0;
-	}
-	if (id == 1)
-	{
-		eyex = -0.4;
-		eyey = 1.85;
-		eyez = -4.85;
-		targetx = 0;
-		targety = 0;
-		targetz = -20;
-		upx = 0;
-		upy = 1;
-		upz = 0;
-	}
-	if (id == 2)
-	{
-		eyex = 0;
-		eyey = 7;
-		eyez = 12;
-		targetx = 0;
-		targety = 0;
-		targetz = -20;
-		upx = 0;
-		upy = 1;
-		upz = 0;
-	}
-}
-void DoMainMenu(int id)
-{
-	switch (id)
-	{
-	case RESET:
-		Reset();
-		break;
-
-	case QUIT:
-		// gracefully close out the graphics:
-		// gracefully close the graphics window:
-		// gracefully exit the program:
-		glfwTerminate();
-		glutSetWindow(MainWindow);
-		glFinish();
-		glutDestroyWindow(MainWindow);
-		exit(0);
-		break;
-
-	default:
-		fprintf(stderr, "Don't know what to do with Main Menu ID %d\n", id);
-	}
-
-	glutSetWindow(MainWindow);
-	glutPostRedisplay();
-}
-void DoProjectMenu(int id)
-{
-	WhichProjection = id;
-
-	glutSetWindow(MainWindow);
-	glutPostRedisplay();
-}*/
 void DoRasterString(float x, float y, float z, char *s)
 {
 	char c;			// one character to print
@@ -6326,19 +6320,6 @@ void DoStringBoxColor(float x, float y, float z, char *s)
 	}
 	glRectd(x - 1, y - 1, x2, y + 1);
 }
-/*void DoStrokeString(float x, float y, float z, float ht, char *s)
-{
-	glPushMatrix();
-	glTranslatef((GLfloat)x, (GLfloat)y, (GLfloat)z);
-	float sf = ht / (119.05f + 33.33f);
-	glScalef((GLfloat)sf, (GLfloat)sf, (GLfloat)sf);
-	char c;			// one character to print
-	for (; (c = *s) != '\0'; s++)
-	{
-		glutStrokeCharacter(GLUT_STROKE_ROMAN, c);
-	}
-	glPopMatrix();
-}*/
 float ElapsedSeconds()
 {
 	// get # of milliseconds since the start of the program:
@@ -6349,62 +6330,6 @@ float ElapsedSeconds()
 
 	return (float)ms / 1000.f;
 }
-/*void InitMenus()
-{
-	glutSetWindow(MainWindow);
-
-	int numColors = sizeof(Colors) / (3 * sizeof(int));
-	int colormenu = glutCreateMenu(DoColorMenu);
-	for (int i = 0; i < numColors; i++)
-	{
-		glutAddMenuEntry(ColorNames[i], i);
-	}
-
-	int axesmenu = glutCreateMenu(DoAxesMenu);
-	glutAddMenuEntry("Off", 0);
-	glutAddMenuEntry("On", 1);
-
-	int depthcuemenu = glutCreateMenu(DoDepthMenu);
-	glutAddMenuEntry("Off", 0);
-	glutAddMenuEntry("On", 1);
-
-	int depthbuffermenu = glutCreateMenu(DoDepthBufferMenu);
-	glutAddMenuEntry("Off", 0);
-	glutAddMenuEntry("On", 1);
-
-	int depthfightingmenu = glutCreateMenu(DoDepthFightingMenu);
-	glutAddMenuEntry("Off", 0);
-	glutAddMenuEntry("On", 1);
-
-	int debugmenu = glutCreateMenu(DoDebugMenu);
-	glutAddMenuEntry("Off", 0);
-	glutAddMenuEntry("On", 1);
-
-	int projmenu = glutCreateMenu(DoProjectMenu);
-	glutAddMenuEntry("Orthographic", ORTHO);
-	glutAddMenuEntry("Perspective", PERSP);
-
-	int cameramenu = glutCreateMenu(DoCameraMenu);
-	glutAddMenuEntry("Main", 0);
-	glutAddMenuEntry("Secondary 1", 1);
-	glutAddMenuEntry("Secondary 2", 2);
-
-	int mainmenu = glutCreateMenu(DoMainMenu);
-	glutAddSubMenu("Axes", axesmenu);
-	glutAddSubMenu("Camera", cameramenu);
-	glutAddSubMenu("Colors", colormenu);
-	glutAddSubMenu("Depth Buffer", depthbuffermenu);
-	glutAddSubMenu("Depth Fighting", depthfightingmenu);
-	glutAddSubMenu("Depth Cue", depthcuemenu);
-	glutAddSubMenu("Projection", projmenu);
-	glutAddMenuEntry("Reset", RESET);
-	glutAddSubMenu("Debug", debugmenu);
-	glutAddMenuEntry("Quit", QUIT);
-
-	// attach the pop-up menu to the right mouse button:
-
-	glutAttachMenu(GLUT_RIGHT_BUTTON);
-}*/
 void InitGraphics()
 {
 	// request the display modes:
@@ -6485,7 +6410,7 @@ void InitGraphics()
 	PatternTree = new GLSLProgram();
 	PatternCamo = new GLSLProgram();
 	PatternSilh = new GLSLProgram();
-	bool valid = Pattern->Create((char *)"shaders/lighting.vert",/* (char *)"shaders/lighting.geom",*/ (char *)"shaders/lighting.frag");
+	bool valid = Pattern->Create((char *)"shaders/lighting.vert", (char *)"shaders/lighting.frag");
 	if (!valid)
 	{
 		fprintf(stderr, "Shader cannot be created!\n");
@@ -7301,6 +7226,7 @@ void Keyboard(unsigned char c, int x, int y)
 						keyBuffer['='] = false;
 						keyBuffer['+'] = false;
 					}
+					resetState();
 					run = true;
 					break;
 				case 'q':
@@ -7355,19 +7281,50 @@ void Keyboard(unsigned char c, int x, int y)
 				{
 				case 'w':
 				case 'W':
+					if (selectIndex >= 1)
+						selectIndex--;
+					else
+						selectIndex = 1;
+					selectIndex = selectIndex % 2;
+					break;
 				case 's':
 				case 'S':
-					selectIndex = 0;
+					selectIndex++;
+					selectIndex = selectIndex % 2;
 					break;
 				case 'a':
 				case 'A':
-					if (userGrassMultiplier > 1)
-						userGrassMultiplier--;
+					if (selectIndex == 0)
+					{
+						if (userGrassMultiplier > 0)
+							userGrassMultiplier--;
+					}
+					if (selectIndex == 1)
+					{
+						if (TANKSPEED > 0.1)
+							TANKSPEED /= 1.5;
+					}
+					if (selectIndex == 2 && false)
+					{
+
+					}
 					break;
 				case 'd':
 				case 'D':
-					if (userGrassMultiplier < 20)
-						userGrassMultiplier++;
+					if (selectIndex == 0)
+					{
+						if (userGrassMultiplier < 20)
+							userGrassMultiplier++;
+					}
+					if (selectIndex == 1)
+					{
+						if (TANKSPEED < 1.0)
+							TANKSPEED *= 1.5;
+					}
+					if (selectIndex == 2 && false)
+					{
+
+					}
 					break;
 				case 'q':
 				case 'Q':
@@ -7572,28 +7529,28 @@ void Keyboard(unsigned char c, int x, int y)
 		case 'C':
 			if (AbramSmoke > 0 && AbramHP > 0) {
 				AbramSmoke--;
-				if (smokeIndex >= 1000)
-					smokeIndex = 0;
-				smokeIDBuffer[smokeIndex] = Time;
-				smokeCoordBuffer[smokeIndex][0] = AbramXY[0];
-				smokeCoordBuffer[smokeIndex][1] = AbramXY[1];
-				smokeDurBuffer[smokeIndex] = 0.09;
-				smokeAngleBuffer[smokeIndex] = rand() % 360;
-				smokeIDBufferSet[smokeIndex] = !smokeIDBufferSet[smokeIndex];
-				smokeActive[smokeIndex] = true;
-				smokeIndex++;
-				for (int i = 0; i < 120; i++)
+				struct Smoke tmpSmoke;
+				tmpSmoke.smokeIDBuffer = Time;
+				tmpSmoke.smokeCoordBuffer[0] = AbramXY[0];
+				tmpSmoke.smokeCoordBuffer[1] = AbramXY[1];
+				tmpSmoke.smokeDurBuffer = 0.09;
+				tmpSmoke.smokeAngleBuffer = rand() % 360;
+				tmpSmoke.smokeIDBufferSet = true;
+				tmpSmoke.smokeActive = true;
+				Smokes.push_back(tmpSmoke);
+				
+				for (int i = 0; i < 12; i++)
 				{
-					if (smokeIndex >= 1000)
-						smokeIndex = 0;
-					smokeIDBuffer[smokeIndex] = Time;
-					smokeCoordBuffer[smokeIndex][0] = AbramXY[0] + 10 * (sin(i *  PI / 6));
-					smokeCoordBuffer[smokeIndex][1] = AbramXY[1] + 10 * (cos(i *  PI / 6));
-					smokeAngleBuffer[smokeIndex] = rand() % 360;
-					smokeDurBuffer[smokeIndex] = 0.09;
-					smokeIDBufferSet[smokeIndex] = !smokeIDBufferSet[smokeIndex];
-					smokeActive[smokeIndex] = true;
-					smokeIndex++;
+					struct Smoke tmpSmoke;
+					tmpSmoke.smokeIDBuffer = Time;
+					tmpSmoke.smokeCoordBuffer[0] = AbramXY[0] + 10 * (sin(i *  PI / 6));
+					tmpSmoke.smokeCoordBuffer[1] = AbramXY[1] + 10 * (cos(i *  PI / 6));
+					tmpSmoke.smokeDurBuffer = 0.09;
+					tmpSmoke.smokeAngleBuffer = rand() % 360;
+					tmpSmoke.smokeIDBufferSet = true;
+					tmpSmoke.smokeActive = true;
+					Smokes.push_back(tmpSmoke);
+					
 				}
 			}
 			break;
@@ -7603,28 +7560,28 @@ void Keyboard(unsigned char c, int x, int y)
 		case 'N':
 			if (IS3Smoke > 0 && IS3HP > 0) {
 				IS3Smoke--;
-				if (smokeIndex >= 1000)
-					smokeIndex = 0;
-				smokeIDBuffer[smokeIndex] = Time;
-				smokeCoordBuffer[smokeIndex][0] = IS3XY[0];
-				smokeCoordBuffer[smokeIndex][1] = IS3XY[1];
-				smokeDurBuffer[smokeIndex] = 0.09;
-				smokeAngleBuffer[smokeIndex] = rand() % 360;
-				smokeIDBufferSet[smokeIndex] = !smokeIDBufferSet[smokeIndex];
-				smokeActive[smokeIndex] = true;
-				smokeIndex++;
-				for (int i = 0; i < 120; i++)
+				struct Smoke tmpSmoke;
+				tmpSmoke.smokeIDBuffer = Time;
+				tmpSmoke.smokeCoordBuffer[0] = IS3XY[0];
+				tmpSmoke.smokeCoordBuffer[1] = IS3XY[1];
+				tmpSmoke.smokeDurBuffer = 0.09;
+				tmpSmoke.smokeAngleBuffer = rand() % 360;
+				tmpSmoke.smokeIDBufferSet = true;
+				tmpSmoke.smokeActive = true;
+				Smokes.push_back(tmpSmoke);
+				
+				for (int i = 0; i < 12; i++)
 				{
-					if (smokeIndex >= 1000)
-						smokeIndex = 0;
-					smokeIDBuffer[smokeIndex] = Time;
-					smokeCoordBuffer[smokeIndex][0] = IS3XY[0] + 10 * (sin(i *  PI / 6));
-					smokeCoordBuffer[smokeIndex][1] = IS3XY[1] + 10 * (cos(i *  PI / 6));
-					smokeDurBuffer[smokeIndex] = 0.09;
-					smokeAngleBuffer[smokeIndex] = rand() % 360;
-					smokeIDBufferSet[smokeIndex] = !smokeIDBufferSet[smokeIndex];
-					smokeActive[smokeIndex] = true;
-					smokeIndex++;
+					struct Smoke tmpSmoke;
+					tmpSmoke.smokeIDBuffer = Time;
+					tmpSmoke.smokeCoordBuffer[0] = IS3XY[0] + 10 * (sin(i *  PI / 6));
+					tmpSmoke.smokeCoordBuffer[1] = IS3XY[1] + 10 * (cos(i *  PI / 6));
+					tmpSmoke.smokeDurBuffer = 0.09;
+					tmpSmoke.smokeAngleBuffer = rand() % 360;
+					tmpSmoke.smokeIDBufferSet = true;
+					tmpSmoke.smokeActive = true;
+					Smokes.push_back(tmpSmoke);
+					
 				}
 			}
 			break;
@@ -7771,16 +7728,47 @@ void keySpecial(int key, int x, int y) {
 				switch (key)
 				{
 				case GLUT_KEY_UP:
+					if (selectIndex >= 1)
+						selectIndex--;
+					else
+						selectIndex = 1;
+					selectIndex = selectIndex % 2;
+					break;
 				case GLUT_KEY_DOWN:
-					selectIndex = 0;
+					selectIndex++;
+					selectIndex = selectIndex % 2;
 					break;
 				case GLUT_KEY_LEFT:
-					if (userGrassMultiplier > 1)
-						userGrassMultiplier--;
+					if (selectIndex == 0)
+					{
+						if (userGrassMultiplier > 0)
+							userGrassMultiplier--;
+					}
+					if (selectIndex == 1)
+					{
+						if (TANKSPEED > 0.1)
+							TANKSPEED /= 1.5;
+					}
+					if (selectIndex == 2 && false)
+					{
+
+					}
 					break;
 				case GLUT_KEY_RIGHT:
-					if (userGrassMultiplier < 20)
-						userGrassMultiplier++;
+					if (selectIndex == 0)
+					{
+						if (userGrassMultiplier < 20)
+							userGrassMultiplier++;
+					}
+					if (selectIndex == 1)
+					{
+						if (TANKSPEED < 1.0)
+							TANKSPEED *= 1.5;
+					}
+					if (selectIndex == 2 && false)
+					{
+
+					}
 					break;
 				}
 			}

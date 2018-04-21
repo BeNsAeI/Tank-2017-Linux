@@ -2,6 +2,7 @@
 #ifndef SIMPLEAI_H
 #define SIMPLEAI_H
 #include <iostream>
+#include <vector>
 #include"const.h"
 #include "Map.h"
 #include "struct.h"
@@ -11,7 +12,9 @@ public:
 	SimpleAI(struct Map * map);
 	float huristic();
 	void pathFind(char AIID,bool*keyBuffer, Crate * Crates);
+	void pathFind(char AIID, bool*keyBuffer, std::vector<Crate> Crates);
 	void getMove(char AIID,bool * keyBuffer, Crate * Crates);
+	void getMove(char AIID, bool * keyBuffer, std::vector<Crate> Crates);
 	struct InnerAIKB {
 		bool isAI = false;
 		char AIID = NULL;

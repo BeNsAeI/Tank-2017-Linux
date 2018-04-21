@@ -43,6 +43,8 @@ const int GLUIFALSE = { false };
 #define ROCKTHRESH 25
 #define REFLECT -1
 #define SMOKECOUNT 3
+#define MAXSMOKE 1000
+#define VEHICLESMOKEMOD 5
 #define TANKHP 4
 #define BRICKHP 1
 #define FRONTARMOR 0.75
