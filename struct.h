@@ -19,6 +19,14 @@ struct Shell {
 	int shooterId;
 	bool active;
 };
+struct Bullet {
+	float x;
+	float y;
+	float angle;
+	float startTime;
+	int shooterId;
+	bool active;
+};
 
 enum Projections
 {

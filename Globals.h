@@ -6,6 +6,7 @@
 	ALCcontext *context;
 	ALuint mainMusic1, mainMusic2, mainMusic3, mainMusic4, mainMusic5, mainMusic6, mainMusic7;
 	ALuint tankShellFire;
+	ALuint tankBulletFire;
 	ALuint tankShellBounce;
 	ALuint tankExplode;
 	ALuint hpRegen;
@@ -165,6 +166,8 @@
 	bool loading = false;
 	float AbramLastShot = 0;
 	float IS3LastShot = 0;
+	float AbramLastShotB = 0;
+	float IS3LastShotB = 0;
 
 	int AbramShells = SHELLSTORAGE;
 	int IS3Shells = SHELLSTORAGE;
@@ -224,6 +227,7 @@
 	std::vector<Crate>Crates;
 
 	struct Shell Shells[SHELLMAX];
+	struct Bullet Bullets[BULLETMAX];
 
 	// AI knowledge Base
 	struct AIKB {
@@ -245,6 +249,7 @@
 	struct AIKB myAIKB;
 	int CrateIndex = 0;
 	int shellSize = 0;
+	int bulletSize = 0;
 	void	Animate();
 	void	Display();
 //	void	DoAxesMenu(int);

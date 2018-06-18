@@ -15,7 +15,9 @@
 #include <al.h>
 #include <alc.h>
 #include <alut.h>
+#include <omp.h>
 #include "glew.h"
+
 #pragma warning(disable:4996)
 #endif
 
@@ -101,6 +103,7 @@ int main(int argc, char *argv[])
 	// init all the global variables used by Display( ):
 	// this will also post a redisplay
 
+
 	Reset();
 
 
@@ -130,6 +133,7 @@ int main(int argc, char *argv[])
 	alDeleteSources(1, &tankShellFire);
 	alDeleteSources(1, &tankShellBounce);
 	alDeleteSources(1, &tankExplode);
+	alDeleteSources(1, &tankBulletFire);
 	alDeleteBuffers(1, Buffers);
 
 	if (myAIKB.isAI)
@@ -153,8 +157,6 @@ void Quit()
 }
 void Animate()
 {
-	// put animation stuff in here -- change some global variables
-	// for Display( ) to find:
 	int ms = glutGet(GLUT_ELAPSED_TIME);
 	ms %= TOTAL_MS;
 	Time = (float)ms/180000;
@@ -166,8 +168,6 @@ void Animate()
 		AbramLastShot = 0;
 		IS3LastShot = 0;
 	}
-	// animate with time here:
-	// force a call to Display( ) next time it is convenient:
 
 	glutSetWindow(MainWindow);
 	glutPostRedisplay();
@@ -1594,7 +1594,40 @@ void KeyHandler() {
 			}
 		}
 	}
-	if (keyBuffer['h'] || keyBuffer['H'] || keyBuffer[ENTER] || keyBuffer['0'])
+	if (keyBuffer['r'] || keyBuffer['R'])
+	{
+		if ((Time - AbramLastShotB) < 0)
+			AbramLastShotB = 0;
+
+		if (AbramHP > 0 && ((Time - AbramLastShotB) >= RELOADTIME/20))
+		{
+			alSourcePlay(Sources[13]);
+			AbramLastShotB = Time;
+			Bullets[bulletSize].x = AbramXY[0];
+			Bullets[bulletSize].y = AbramXY[1];
+			Bullets[bulletSize].angle = AbramTurretAngle + AbramHullAngle;
+			Bullets[bulletSize].shooterId = ABRAMID;
+			Bullets[bulletSize].startTime = Time;
+			Bullets[bulletSize].active = true;
+			if (bulletSize < BULLETMAX - 1)
+				bulletSize++;
+			else
+				bulletSize = 0;
+			for (int i = 0; i < 5; i++)
+			{
+				struct Smoke tmpSmoke;
+				tmpSmoke.smokeIDBuffer = Time;
+				tmpSmoke.smokeCoordBuffer[0] = AbramXY[0] - 5 * sin((AbramTurretAngle + AbramHullAngle) * PI / 180.0);
+				tmpSmoke.smokeCoordBuffer[1] = AbramXY[1] - 5 * cos((AbramTurretAngle + AbramHullAngle) * PI / 180.0);
+				tmpSmoke.smokeDurBuffer = 0.0075;
+				tmpSmoke.smokeAngleBuffer = rand() % 360;
+				tmpSmoke.smokeIDBufferSet = true;
+				tmpSmoke.smokeActive = true;
+				Smokes.push_back(tmpSmoke);
+			}
+		}
+	}
+	if (keyBuffer['h'] || keyBuffer['H'] || keyBuffer['0'])
 	{
 		if ((Time - IS3LastShot) < 0)
 			IS3LastShot = 0;
@@ -1619,8 +1652,8 @@ void KeyHandler() {
 				
 				struct Smoke tmpSmoke;
 				tmpSmoke.smokeIDBuffer = Time;
-				tmpSmoke.smokeCoordBuffer[0] = AbramXY[0] - 5 * sin((IS3TurretAngle + IS3HullAngle) * PI / 180.0);
-				tmpSmoke.smokeCoordBuffer[1] = AbramXY[1] - 5 * cos((IS3TurretAngle + IS3HullAngle) * PI / 180.0);
+				tmpSmoke.smokeCoordBuffer[0] = IS3XY[0] - 5 * sin((IS3TurretAngle + IS3HullAngle) * PI / 180.0);
+				tmpSmoke.smokeCoordBuffer[1] = IS3XY[1] - 5 * cos((IS3TurretAngle + IS3HullAngle) * PI / 180.0);
 				tmpSmoke.smokeDurBuffer = 0.015;
 				tmpSmoke.smokeAngleBuffer = rand() % 360;
 				tmpSmoke.smokeIDBufferSet = true;
@@ -1630,9 +1663,39 @@ void KeyHandler() {
 			}
 		}
 	}
-	// force a call to :
-	//glutSetWindow(MainWindow);
-	//glutPostRedisplay();
+	if (keyBuffer['y'] || keyBuffer['Y'] || keyBuffer[ENTER])
+	{
+		if ((Time - IS3LastShotB) < 0)
+			IS3LastShotB = 0;
+
+		if (IS3HP > 0 && ((Time - IS3LastShotB) >= RELOADTIME/20))
+		{
+			alSourcePlay(Sources[13]);
+			IS3LastShotB = Time;
+			Bullets[bulletSize].x = IS3XY[0];
+			Bullets[bulletSize].y = IS3XY[1];
+			Bullets[bulletSize].angle = IS3TurretAngle + IS3HullAngle;
+			Bullets[bulletSize].shooterId = IS3ID;
+			Bullets[bulletSize].startTime = Time;
+			Bullets[bulletSize].active = true;
+			if (bulletSize < BULLETMAX - 1)
+				bulletSize++;
+			else
+				bulletSize = 0;
+			for (int i = 0; i < 5; i++)
+			{
+				struct Smoke tmpSmoke;
+				tmpSmoke.smokeIDBuffer = Time;
+				tmpSmoke.smokeCoordBuffer[0] = IS3XY[0] - 5 * sin((IS3TurretAngle + IS3HullAngle) * PI / 180.0);
+				tmpSmoke.smokeCoordBuffer[1] = IS3XY[1] - 5 * cos((IS3TurretAngle + IS3HullAngle) * PI / 180.0);
+				tmpSmoke.smokeDurBuffer = 0.0075;
+				tmpSmoke.smokeAngleBuffer = rand() % 360;
+				tmpSmoke.smokeIDBufferSet = true;
+				tmpSmoke.smokeActive = true;
+				Smokes.push_back(tmpSmoke);
+			}
+		}
+	}
 }
 void drawSmoke(float X, float Y, float Z, float angle, float scale, float r, float g, float b, float beginTime, float duration)
 {
@@ -2669,6 +2732,26 @@ void drawShell(float X, float Y, float angle,float scale=1)
 	glScalef(SHELLSCALE*scale, SHELLSCALE*scale, SHELLSCALE*scale);
 	beginPoint = shell[START];
 	endPoint = shell[END]- shell[START];
+	glPushMatrix();
+	glRotatef(270, 1, 0, 0);
+	//SetMaterial(1, 1, 0, 1.0);
+	glColor3f(1, 0.5, 0);
+	glDrawArrays(GL_TRIANGLES, beginPoint, endPoint);
+	glPopMatrix();
+	glPopMatrix();
+}
+void drawBullet(float X, float Y, float angle, float scale = 1)
+{
+	int beginPoint;
+	int endPoint;
+
+	glPushMatrix();
+	glTranslatef(X + 0.1, 2.9, Y + 0.1);	//movement
+	glRotatef(angle, 0, 1, 0);
+	glTranslatef(0, 0, -3);
+	glScalef(SHELLSCALE*scale/2, SHELLSCALE*scale/2, SHELLSCALE*scale/2);
+	beginPoint = shell[START];
+	endPoint = shell[END] - shell[START];
 	glPushMatrix();
 	glRotatef(270, 1, 0, 0);
 	//SetMaterial(1, 1, 0, 1.0);
@@ -4699,6 +4782,7 @@ void drawMenuText()
 		DoStringBox(25, y - 10, 0, (char *)"[  ]");
 
 		DoStringBox(15, y - 15, 0, (char *)"[  ]");
+		DoStringBox(20, y - 15, 0, (char *)"[  ]");
 		DoStringBox(25, y - 15, 0, (char *)"[  ]");
 
 		glColor3f(1, 1, 1);
@@ -4713,7 +4797,8 @@ void drawMenuText()
 		DoRasterString(20, y - 10, 0, (char *)"[ S ]");
 		DoRasterString(25, y - 10, 0, (char *)"[ D ]");
 
-		DoRasterString(15, y - 15, 0, (char *)"[ F ]");
+		DoRasterString(15, y - 15, 0, (char *)"[ R ]");
+		DoRasterString(20, y - 15, 0, (char *)"[ F ]");
 		DoRasterString(25, y - 15, 0, (char *)"[ C ]");
 
 		
@@ -4730,7 +4815,8 @@ void drawMenuText()
 		DoStringBox(75, y - 10, 0, (char *)"[  ]");
 		DoStringBox(80, y - 10, 0, (char *)"[  ]");
 
-		DoStringBox(70, y - 15, 0, (char *)"[  ]");
+		DoStringBox(70, y - 15, 0, (char *)"[      ]");
+		DoStringBox(75, y - 15, 0, (char *)"[  ]");
 		DoStringBox(80, y - 15, 0, (char *)"[  ]");
 		
 		glColor3f(1, 1, 1);
@@ -4745,7 +4831,8 @@ void drawMenuText()
 		DoRasterString(75, y - 10, 0, (char *)"[K/5]");
 		DoRasterString(80, y - 10, 0, (char *)"[L/6]");
 
-		DoRasterString(70, y - 15, 0, (char *)"[H/0]");
+		DoRasterString(70, y - 15, 0, (char *)"[Y/Entr]");
+		DoRasterString(75, y - 15, 0, (char *)"[H/0]");
 		DoRasterString(80, y - 15, 0, (char *)"[N/.]");
 		
 	}
@@ -6261,6 +6348,177 @@ void Display()
 				}
 			}
 		}
+		for (int i = 0; i < BULLETMAX; i++)
+		{
+			if ((Time - Bullets[i].startTime) < SHELLDURATION && Bullets[i].active)
+			{
+				drawBullet(Bullets[i].x - ((Time - Bullets[i].startTime) * BULLETSPEED * sin(Bullets[i].angle * PI / 180.0)), Bullets[i].y - ((Time - Bullets[i].startTime) * BULLETSPEED * cos(Bullets[i].angle * PI / 180.0)), Bullets[i].angle);
+
+				// Calculate trajectory:
+				if (
+					((Bullets[i].x - ((Time - Bullets[i].startTime) * BULLETSPEED * sin(Bullets[i].angle * PI / 180.0)) < IS3XY[0] + BODY) && (Bullets[i].x - ((Time - Bullets[i].startTime) * BULLETSPEED * sin(Bullets[i].angle * PI / 180.0)) > IS3XY[0] - BODY)) &&
+					((Bullets[i].y - ((Time - Bullets[i].startTime) * BULLETSPEED * cos(Bullets[i].angle * PI / 180.0)) < IS3XY[1] + BODY) && (Bullets[i].y - ((Time - Bullets[i].startTime) * BULLETSPEED * cos(Bullets[i].angle * PI / 180.0)) > IS3XY[1] - BODY)) &&
+					Bullets[i].shooterId == ABRAMID
+					)
+				{
+					//spark
+					//Dammage:
+					IS3HP -= 0.1 * fabs(fabs(sin((Bullets[i].angle - IS3HullAngle)* PI / 180.0)) - fabs(cos((Bullets[i].angle - IS3HullAngle)* PI / 180.0)));
+					// Bounce!
+					if (fabs(fabs(sin((Bullets[i].angle - IS3HullAngle)* PI / 180.0)) - fabs(cos((Bullets[i].angle - IS3HullAngle)* PI / 180.0))) < BOUNCETHRESH)
+					{
+						alSourcePlay(Sources[9]);
+						if (IS3XY[0] > Bullets[i].x)
+						{
+							if (IS3XY[1] > Bullets[i].y)
+								if (IS3XY[0] - Bullets[i].x >= IS3XY[1] - Bullets[i].y)
+									if (fabs(sin((Bullets[i].angle - IS3HullAngle)* PI / 180.0)) - fabs(cos((Bullets[i].angle - IS3HullAngle)* PI / 180.0)) >= 0)
+										Bullets[i].angle += 90;
+									else
+										Bullets[i].angle -= 90;
+								else
+									if (fabs(sin((Bullets[i].angle - IS3HullAngle)* PI / 180.0)) - fabs(cos((Bullets[i].angle - IS3HullAngle)* PI / 180.0)) >= 0)
+										Bullets[i].angle -= 90;
+									else
+										Bullets[i].angle += 90;
+							else
+								if (IS3XY[0] - Bullets[i].x >= IS3XY[1] - Bullets[i].y)
+									if (fabs(sin((Bullets[i].angle - IS3HullAngle)* PI / 180.0)) - fabs(cos((Bullets[i].angle - IS3HullAngle)* PI / 180.0)) >= 0)
+										Bullets[i].angle -= 90;
+									else
+										Bullets[i].angle += 90;
+								else
+									if (fabs(sin((Bullets[i].angle - IS3HullAngle)* PI / 180.0)) - fabs(cos((Bullets[i].angle - IS3HullAngle)* PI / 180.0)) >= 0)
+										Bullets[i].angle += 90;
+									else
+										Bullets[i].angle -= 90;
+						}
+						else
+						{
+							if (IS3XY[1] > Bullets[i].y)
+								if (IS3XY[0] - Bullets[i].x >= IS3XY[1] - Bullets[i].y)
+									Bullets[i].angle -= 90;
+								else
+									Bullets[i].angle += 90;
+							else
+								if (IS3XY[0] - Bullets[i].x >= IS3XY[1] - Bullets[i].y)
+									Bullets[i].angle += 90;
+								else
+									Bullets[i].angle -= 90;
+						}
+						Bullets[i].startTime = Time;
+						Bullets[i].shooterId = IS3ID;
+						Bullets[i].x = IS3XY[0];
+						Bullets[i].y = IS3XY[1];
+					}
+					else
+					{
+						Bullets[i].active = false;
+					}
+				}
+				if (
+					((Bullets[i].x - ((Time - Bullets[i].startTime) * BULLETSPEED * sin(Bullets[i].angle * PI / 180.0)) < AbramXY[0] + BODY) && (Bullets[i].x - ((Time - Bullets[i].startTime) * BULLETSPEED * sin(Bullets[i].angle * PI / 180.0)) > AbramXY[0] - BODY)) &&
+					((Bullets[i].y - ((Time - Bullets[i].startTime) * BULLETSPEED * cos(Bullets[i].angle * PI / 180.0)) < AbramXY[1] + BODY) && (Bullets[i].y - ((Time - Bullets[i].startTime) * BULLETSPEED * cos(Bullets[i].angle * PI / 180.0)) > AbramXY[1] - BODY)) &&
+					Bullets[i].shooterId == IS3ID
+					)
+				{
+					//spark
+					//Dammage:
+					AbramHP -= 0.1 * fabs(fabs(sin((Bullets[i].angle - AbramHullAngle)* PI / 180.0)) - fabs(cos((Bullets[i].angle - AbramHullAngle)* PI / 180.0)));
+					// Bounce!
+					if (fabs(fabs(sin((Bullets[i].angle - AbramHullAngle)* PI / 180.0)) - fabs(cos((Bullets[i].angle - AbramHullAngle)* PI / 180.0))) < BOUNCETHRESH)
+					{
+						alSourcePlay(Sources[9]);
+						if (AbramXY[0] > Bullets[i].x)
+						{
+							if (AbramXY[1] > Bullets[i].y)
+								if (AbramXY[0] - Bullets[i].x >= AbramXY[1] - Bullets[i].y)
+									if (fabs(sin((Bullets[i].angle - AbramHullAngle)* PI / 180.0)) - fabs(cos((Bullets[i].angle - AbramHullAngle)* PI / 180.0)) >= 0)
+										Bullets[i].angle += 90;
+									else
+										Bullets[i].angle -= 90;
+								else
+									if (fabs(sin((Bullets[i].angle - AbramHullAngle)* PI / 180.0)) - fabs(cos((Bullets[i].angle - AbramHullAngle)* PI / 180.0)) >= 0)
+										Bullets[i].angle -= 90;
+									else
+										Bullets[i].angle += 90;
+							else
+								if (AbramXY[0] - Bullets[i].x >= AbramXY[1] - Bullets[i].y)
+									if (fabs(sin((Bullets[i].angle - AbramHullAngle)* PI / 180.0)) - fabs(cos((Bullets[i].angle - AbramHullAngle)* PI / 180.0)) >= 0)
+										Bullets[i].angle -= 90;
+									else
+										Bullets[i].angle += 90;
+								else
+									if (fabs(sin((Bullets[i].angle - AbramHullAngle)* PI / 180.0)) - fabs(cos((Bullets[i].angle - AbramHullAngle)* PI / 180.0)) >= 0)
+										Bullets[i].angle += 90;
+									else
+										Bullets[i].angle -= 90;
+						}
+						else
+						{
+							if (AbramXY[1] > Bullets[i].y)
+								if (AbramXY[0] - Bullets[i].x >= AbramXY[1] - Bullets[i].y)
+									Bullets[i].angle -= 90;
+								else
+									Bullets[i].angle += 90;
+							else
+								if (AbramXY[0] - Bullets[i].x >= AbramXY[1] - Bullets[i].y)
+									Bullets[i].angle += 90;
+								else
+									Bullets[i].angle -= 90;
+						}
+						Bullets[i].startTime = Time;
+						Bullets[i].shooterId = ABRAMID;
+						Bullets[i].x = AbramXY[0];
+						Bullets[i].y = AbramXY[1];
+					}
+					else
+					{
+						Bullets[i].active = false;
+					}
+				}
+				if (
+					(Bullets[i].x - ((Time - Bullets[i].startTime) * BULLETSPEED * sin(Bullets[i].angle * PI / 180.0)) < -MAPEDGEX) ||
+					(Bullets[i].x - ((Time - Bullets[i].startTime) * BULLETSPEED * sin(Bullets[i].angle * PI / 180.0)) > MAPEDGEX) ||
+					(Bullets[i].y - ((Time - Bullets[i].startTime) * BULLETSPEED * cos(Bullets[i].angle * PI / 180.0)) < -MAPEDGEY) ||
+					(Bullets[i].y - ((Time - Bullets[i].startTime) * BULLETSPEED * cos(Bullets[i].angle * PI / 180.0)) > MAPEDGEY)
+					)
+					Bullets[i].active = false;
+				int tmpi;
+				int tmpj;
+				//CrateCollisionModel
+
+				std::vector<Crate>::iterator cratecheck = CrateCollisionModel(Bullets[i].x, Bullets[i].y,
+					(Time - Bullets[i].startTime) * BULLETSPEED * sin(Bullets[i].angle * PI / 180.0),
+					(Time - Bullets[i].startTime) * BULLETSPEED * cos(Bullets[i].angle * PI / 180.0),
+					-1
+				);
+				if (cratecheck != Crates.end())
+				{
+					//Crates[cratecheck].isActive = false;
+					cratecheck->isActive = false;
+					//myMap.isCrate[Crates[cratecheck].i][Crates[cratecheck].j] = false;
+					myMap.isCrate[cratecheck->i][cratecheck->j] = false;
+					Crates.erase(cratecheck);
+				}
+				if (
+					MapCollisionModel(Bullets[i].x, Bullets[i].y,
+					(Time - Bullets[i].startTime) *BULLETSPEED * sin(Bullets[i].angle * PI / 180.0),
+						(Time - Bullets[i].startTime) * BULLETSPEED * cos(Bullets[i].angle * PI / 180.0),
+						-1,
+						0,
+						&tmpi,
+						&tmpj
+					)
+					)
+				{
+					if (myMap.MCM[tmpi][tmpj] && myMap.isSolid[tmpi][tmpj] && myMap.color[tmpi][tmpj][0] != 7)
+					{
+						Bullets[i].active = false;
+					}
+				}
+			}
+		}
 		glDisableVertexAttribArray(0);
 	}
 
@@ -6544,6 +6802,7 @@ void InitLists()
 		alGenSources((ALuint)1, &tankExplode);
 		alGenSources((ALuint)1, &hpRegen);
 		alGenSources((ALuint)1, &AmmoSmoke);
+		alGenSources((ALuint)1, &tankBulletFire);
 		// check for errors
 
 		alSourcef(mainMusic1, AL_PITCH, 1);
@@ -6680,6 +6939,17 @@ void InitLists()
 		alSourcei(AmmoSmoke, AL_LOOPING, AL_FALSE);
 		// check for errros
 
+		alSourcef(tankBulletFire, AL_PITCH, 1);
+		// check for errors
+		alSourcef(tankBulletFire, AL_GAIN, 1);
+		// check for errors
+		alSource3f(tankBulletFire, AL_POSITION, 0, 0, 0);
+		// check for errors
+		alSource3f(tankBulletFire, AL_VELOCITY, 0, 0, 0);
+		// check for errors
+		alSourcei(tankBulletFire, AL_LOOPING, AL_FALSE);
+		// check for errros
+
 		alGenBuffers(NUM_BUFFERS, Buffers);
 		alutLoadWAVFile("sound/song1.wav", &format, &data, &size, &freq, &loop);
 		alBufferData(Buffers[0], format, data, size, freq);
@@ -6731,6 +7001,10 @@ void InitLists()
 
 		alutLoadWAVFile("sound/ammo.wav", &format, &data, &size, &freq, &loop);
 		alBufferData(Buffers[12], format, data, size, freq);
+		alutUnloadWAV(format, data, size, freq);
+
+		alutLoadWAVFile("sound/bullet.wav", &format, &data, &size, &freq, &loop);
+		alBufferData(Buffers[13], format, data, size, freq);
 		alutUnloadWAV(format, data, size, freq);
 
 		// Bind buffers into audio sources.
@@ -6827,6 +7101,14 @@ void InitLists()
 		alSource3f(Sources[12], AL_POSITION, 0, 0, 0);
 		alSource3f(Sources[12], AL_VELOCITY, 0, 0, 0);
 		alSourcei(Sources[12], AL_LOOPING, AL_FALSE);
+
+		alSourcei(Sources[13], AL_BUFFER, Buffers[13]);
+		alSourcef(Sources[13], AL_PITCH, 1.0);
+		alSourcef(Sources[13], AL_GAIN, 1.0);
+		alSource3f(Sources[13], AL_POSITION, 0, 0, 0);
+		alSource3f(Sources[13], AL_VELOCITY, 0, 0, 0);
+		alSourcei(Sources[13], AL_LOOPING, AL_FALSE);
+
 		isSoundLoaded = true;
 	}
 	

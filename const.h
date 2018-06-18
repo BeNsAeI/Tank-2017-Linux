@@ -28,16 +28,18 @@ const int GLUIFALSE = { false };
 #define SPAWN 45
 #define TREESCALE 35
 #define ROCKSCALE 10
-#define SHELLSCALE 0.045
+#define SHELLSCALE 0.065
 #define RELOADTIME 0.015
 #ifdef WIN32
 #define SHELLSPEED 50000
+#define BULLETSPEED 25000
 #define GRASSGRAINX 32
 #define GRASSGRAINY 28
 #define MENUMULTIPLIER 2
 #endif
 #ifndef WIN32
 #define SHELLSPEED 40000
+#define BULLETSPEED 25000
 #define GRASSGRAINX 4
 #define GRASSGRAINY 7
 #define MENUMULTIPLIER 6
@@ -56,6 +58,8 @@ const int GLUIFALSE = { false };
 #define SHELLBOUNCETHRESH 0.25
 #define SHELLDURATION 0.03
 #define SHELLMAX 50
+#define BULLETMAX 250
+#define CL_LOCAL_SIZE 32
 #define SHELLSTORAGE 10
 #define BOUNCETHRESH 0.1
 #define CRATECAP 9
@@ -71,8 +75,8 @@ const int GLUIFALSE = { false };
 #define TOTAL_MS (180 * 1000)
 #define NUMMODEL 1
 #define BUFFER_OFFSET(i) ((void*)(i))
-#define NUM_BUFFERS 13
-#define NUM_SOURCES 13
+#define NUM_BUFFERS 14
+#define NUM_SOURCES 14
 #define _USE_MATH_DEFINES
 #define PLANSIZE 3
 #define AIMTHRESH 1
