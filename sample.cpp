@@ -6361,6 +6361,16 @@ void Display()
 					Bullets[i].shooterId == ABRAMID
 					)
 				{
+					//Smoke:
+					struct Smoke tmpSmoke;
+					tmpSmoke.smokeIDBuffer = Time;
+					tmpSmoke.smokeCoordBuffer[0] = IS3XY[0] + 1 * (sin(rand() % 10 *  PI / 6));
+					tmpSmoke.smokeCoordBuffer[1] = IS3XY[1] + 1 * (cos(rand() % 10 *  PI / 6));
+					tmpSmoke.smokeDurBuffer = 0.01;
+					tmpSmoke.smokeAngleBuffer = rand() % 360;
+					tmpSmoke.smokeIDBufferSet = true;
+					tmpSmoke.smokeActive = true;
+					Smokes.push_back(tmpSmoke);
 					//spark
 					//Dammage:
 					IS3HP -= 0.1 * fabs(fabs(sin((Bullets[i].angle - IS3HullAngle)* PI / 180.0)) - fabs(cos((Bullets[i].angle - IS3HullAngle)* PI / 180.0)));
@@ -6422,6 +6432,16 @@ void Display()
 					Bullets[i].shooterId == IS3ID
 					)
 				{
+					//Smoke:
+					struct Smoke tmpSmoke;
+					tmpSmoke.smokeIDBuffer = Time;
+					tmpSmoke.smokeCoordBuffer[0] = AbramXY[0] + 1 * (sin(rand() % 10 *  PI / 6));
+					tmpSmoke.smokeCoordBuffer[1] = AbramXY[1] + 1 * (cos(rand() % 10 *  PI / 6));
+					tmpSmoke.smokeDurBuffer = 0.01;
+					tmpSmoke.smokeAngleBuffer = rand() % 360;
+					tmpSmoke.smokeIDBufferSet = true;
+					tmpSmoke.smokeActive = true;
+					Smokes.push_back(tmpSmoke);
 					//spark
 					//Dammage:
 					AbramHP -= 0.1 * fabs(fabs(sin((Bullets[i].angle - AbramHullAngle)* PI / 180.0)) - fabs(cos((Bullets[i].angle - AbramHullAngle)* PI / 180.0)));
@@ -6515,6 +6535,15 @@ void Display()
 					if (myMap.MCM[tmpi][tmpj] && myMap.isSolid[tmpi][tmpj] && myMap.color[tmpi][tmpj][0] != 7)
 					{
 						Bullets[i].active = false;
+						struct Smoke tmpSmoke;
+						tmpSmoke.smokeIDBuffer = Time;
+						tmpSmoke.smokeCoordBuffer[0] = myMap.coord[tmpi][tmpj][0] + 3 * (sin(rand() % 10 * PI / 6));
+						tmpSmoke.smokeCoordBuffer[1] = myMap.coord[tmpi][tmpj][1] + 3 * (cos(rand() % 10 * PI / 6));
+						tmpSmoke.smokeDurBuffer = 0.01;
+						tmpSmoke.smokeAngleBuffer = rand() % 360;
+						tmpSmoke.smokeIDBufferSet = true;
+						tmpSmoke.smokeActive = true;
+						Smokes.push_back(tmpSmoke);
 					}
 				}
 			}
