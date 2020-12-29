@@ -5,6 +5,9 @@ install:
 		sudo apt-get install build-essential libgl1-mesa-dev
 		sudo apt-get install libglew-dev libsdl2-dev libsdl2-image-dev libglm-dev libfreetype6-dev
 		sudo apt install mesa-utils
+		sudo apt-get install libopenal1 libopenal-dev
+		sudo apt-get install libalut-dev
+		sudo apt-get install libglfw3 libglfw3-dev
 		glxinfo | grep OpenGL
 		pkg-config --libs --static glew
 glew:
